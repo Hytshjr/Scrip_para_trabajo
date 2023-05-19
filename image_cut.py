@@ -1,26 +1,50 @@
-import tkinter as tk
-from PIL import ImageTk, Image
+from tkinter import messagebox as MessageBox
 from tkinter import filedialog
-
+import tkinter as tk
 import numpy as np
+import tinify
+import glob
 import cv2
 import os
 
-def get_path():
-    file_path = filedialog.askopenfilename()
-    return file_path
+
+def get_path(archivo = True):
+    if archivo == True:
+        file_path = filedialog.askopenfilename()
+        return file_path
+    
+    elif archivo == False:
+        file_path = filedialog.askdirectory()
+        return file_path
+    
+def dist_maker(file_path, dist_name, ruta_herencia = True):
+    if ruta_herencia == True:
+        posicion_ultima_barra = file_path.rfind("/")
+        directorio = file_path[:posicion_ultima_barra]
+        name_image = file_path[posicion_ultima_barra + 1:]
+        ruta_carpeta = directorio+'/'+dist_name
+
+        if not os.path.exists(ruta_carpeta):
+            os.makedirs(ruta_carpeta)
+
+            return ruta_carpeta
+    else:
+        if not os.path.exists(file_path+'/'+dist_name):
+            os.makedirs(file_path+'/'+dist_name)
+            return file_path+'/'+dist_name
 
 class Editor:
-    def __init__(self, label):
-        self.label = label
-
+    def __init__(self, root = None, path = None):
+        
+        self.root = root
+        self.path = path
     
     def cut_image(self):
         def mouse_track(event,x,y,flags,param):
-            nonlocal pxl_save
-            global rect_pts
             nonlocal size_img
+            nonlocal pxl_save
             nonlocal img_pos
+            global rect_pts
             nonlocal count
 
 
@@ -95,6 +119,10 @@ class Editor:
                     break
                 break
 
+            elif k == ord('s'):
+                cv2.destroyAllWindows()
+                break
+
         size_cut = len(pxl_save)
         count_cut = 0
         imageOut = []
@@ -119,6 +147,8 @@ class Editor:
         directorio = file_path[:posicion_ultima_barra]
         name_image = file_path[posicion_ultima_barra + 1:-4]
         ruta_carpeta = directorio+'/images'
+
+        self.path = ruta_carpeta
 
         for index in range(len(imageOut)):
 
@@ -156,4 +186,56 @@ class Editor:
             if not condicion:
                 cv2.destroyAllWindows()
                 break
+
+    def compress(self, continuar = True ,file_path = None):
+
+        with open("key_api.txt", "r") as file:
+            key = file.read()
+
+        if key == None or key == '':
+            
+            MessageBox.showwarning("Alerta", 
+            "No has agregado la api")
+        
+        elif continuar == True:            
+            directorio_path = get_path(archivo = False)
+
+            # Obtener la lista de archivos en la carpeta
+            archivos = glob.glob(directorio_path + '/*')
+            directorio_path_save = get_path(archivo = False)
+            compress_save = dist_maker(directorio_path_save,'compress', False)
+
+            # Imprimir los nombres de los archivos
+            for archivo in archivos:
+                
+                position = archivo.rfind("/")
+                name_file = archivo[position + 1:]
+
+                ruta_guardado = compress_save+'/'+name_file
+
+                print(ruta_guardado)
+
+                tinify.key = key
+                source = tinify.from_file(archivo)
+                source.to_file(ruta_guardado)
+
+        elif continuar  == F:
+            archivos = glob.glob(self.path + '/*')
+            compress_save = dist_maker(self.path,'compress')
+
+            # Imprimir los nombres de los archivos
+            for archivo in archivos:
+                position = archivo.rfind("/")
+                name_file = archivo[position + 1:]
+
+                ruta_guardado = compress_save+'/'+name_file
+
+                print(ruta_guardado)
+
+                tinify.key = key
+                source = tinify.from_file(archivo)
+                source.to_file(ruta_guardado)
+        
+
+
 

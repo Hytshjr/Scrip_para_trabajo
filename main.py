@@ -1,23 +1,22 @@
-import tkinter as tk
-from tkinter import filedialog
+from Fazil.gui_app import Frame
 from image_cut import Editor
-
+import tkinter as tk
 
 def run():
     # Crear la ventana
     window = tk.Tk()
-    window.title("Visor de Imágenes")
+    window.title("Fazil")
 
-    # Crear una etiqueta para mostrar la imagen
-    label = tk.Label(window)
-    label.pack()
+    # Cargar el archivo de imagen desde el disco.
+    icono = tk.PhotoImage(file="IMG/icon/fazil.png")
+    # Establecerlo como ícono de la ventana.
+    window.iconphoto(True, icono)
 
-    # Crear el botón para abrir la imagen
-    button = tk.Button(window, text="Recorte de imagen", command=Editor(label=label).cut_image)
-    button.pack(pady=10)
+    edit = Editor(root = window) 
+    app = Frame(root = window, clase = edit)
 
     # Iniciar el bucle de la aplicación
-    window.mainloop()
+    app.mainloop()
 
 if __name__ == "__main__":
     run()
