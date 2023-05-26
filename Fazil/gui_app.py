@@ -55,7 +55,56 @@ class Frame(tk.Frame):
         self.boton_replpace = tk.Button(self, text='Corte y compresion de imagen', command=self.cut_compress)
         self.boton_replpace.config(width=40, border=0, fg='black', bg='#DCDCDC')
         self.boton_replpace.grid(row=4, column=0, pady=3, columnspan=2)
-    
+
+        #Este boton crea el nuevo frame para hacer el html
+        self.boton_replpace = tk.Button(self, text='Hacer el html', command=self.create_html)
+        self.boton_replpace.config(width=40, border=0)
+        self.boton_replpace.grid(row=5, column=0, pady=3, columnspan=2)
+
+    def create_html(self):
+        new_frame = tk.Frame()
+        self.frame = new_frame
+        self.frame.pack()        
+        self.frame.config(width=20, height=20, bg='#808080')
+
+        #Este primer espacio para poner el link de la imagen
+        self.count_head = tk.StringVar() #Guarda lo que ingresa en el campo
+        self.count_head.set('')
+
+        self.entry_head = tk.Entry(self.frame, textvariable = self.count_head)
+        self.entry_head.config(width=20, bg='#DCDCDC', border=0)
+        self.entry_head.grid(row=1, column=0, padx=5, pady=5)
+
+        #Este Segundo espacio para poner el link de la imagen
+        self.count_body = tk.StringVar() #Guarda lo que ingresa en el campo
+        self.count_body.set('')
+
+        self.entry_body = tk.Entry(self.frame, textvariable = self.count_body)
+        self.entry_body.config(width=20, bg='#DCDCDC', border=0)
+        self.entry_body.grid(row=1, column=1, padx=5, pady=5)
+
+        #Este Segundo espacio para poner el link de la imagen
+        self.count_legal = tk.StringVar() #Guarda lo que ingresa en el campo
+        self.count_legal.set('')
+
+        self.entry_legal = tk.Entry(self.frame, textvariable = self.count_legal)
+        self.entry_legal.config(width=20, bg='#DCDCDC', border=0)
+        self.entry_legal.grid(row=1, column=2, padx=5, pady=5)
+
+        # BOTONES
+
+        # Boton para obtener las cantidades
+        self.boton_save = tk.Button(self.frame, text='Cantidades')
+        self.boton_save.config(width=20, border=0, fg='black', bg='#DCDCDC')
+        self.boton_save.grid(row=2, column=1,columnspan=2)
+
+        # Boton para obtener las cantidades
+        self.boton_save = tk.Button(self.frame, text='Terminar', command=self.clean_frame)
+        self.boton_save.config(width=20, border=0, fg='black', bg='#DCDCDC')
+        self.boton_save.grid(row=2, column=0, columnspan=1)
+
+
+
     def guardar_api(self):
         self.entry_api.config(state='disable')
         key = self.compres_api.get()
@@ -71,5 +120,7 @@ class Frame(tk.Frame):
         self.clase.cut_image()
         self.clase.compress(continuar = False)
 
+    def clean_frame(self):
+        self.frame.destroy()
 
         

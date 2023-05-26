@@ -6,6 +6,7 @@ def run():
     # Crear la ventana
     window = tk.Tk()
     window.title("Fazil")
+    window.config(bg='#808080')
 
     # Cargar el archivo de imagen desde el disco.
     icono = tk.PhotoImage(file="IMG/icon/fazil.png")
