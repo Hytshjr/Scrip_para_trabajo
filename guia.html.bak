@@ -6,23 +6,6 @@
             <td>              
 
               
-
-              <a target="_blank"> 
-                <table align="center" border="0" bgcolor="#1fc0bd" cellpadding="0" cellspacing="0" class="banner" width="600">
-                  <tr>
-                    <td>
-                      <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                        <tr>
-                          <td class="mobileBanner" height="100%" width="100%">
-                            <img border="0" class="banner" src="https://image.corp.fazil-app.com/lib/fe3911727564047d731776/m/23/4f12cae9-4f92-4234-88e2-9fe1c2369f6c.png" style="display:block;" width="100%">
-                          </td>
-                        </tr>
-                      </table>
-                    </td> 
-                  </tr>
-                </table>
-              </a>
-              
               <!--/Legal/-->  
               <table align="center" bgcolor="#fff" border="0" cellpadding="0" cellspacing="0" class="banner" width="600">
                 <tr>

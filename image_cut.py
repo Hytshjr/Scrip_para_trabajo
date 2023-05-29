@@ -1,4 +1,5 @@
 from tkinter import messagebox as MessageBox
+from Fazil.gui_app import Frame as fr
 from tkinter import filedialog
 import tkinter as tk
 import numpy as np
@@ -203,6 +204,8 @@ class Editor:
             if not condicion:
                 cv2.destroyAllWindows()
                 break
+    
+    # Comprimir las imagenes
 
     def compress(self, continuar = True):
 
@@ -248,58 +251,28 @@ class Editor:
                 tinify.key = key
                 source = tinify.from_file(archivo)
                 source.to_file(ruta_guardado)
-
-    def campos_rellenar_html(self):
-        #Este primer espacio para poner el link de la imagen
-        self.count_head = tk.StringVar() #Guarda lo que ingresa en el campo
-        self.count_head.set('')
-
-        self.entry_head = tk.Entry(self.frame, textvariable = self.count_head)
-        self.entry_head.config(width=50, bg='#DCDCDC', border=0)
-        self.entry_head.grid(row=1, column=0, padx=5, pady=5)
-        
-        #Este Segundo espacio para poner el link de la imagen
-        self.count_body = tk.StringVar() #Guarda lo que ingresa en el campo
-        self.count_body.set('')
-
-        self.entry_body = tk.Entry(self.frame, textvariable = self.count_body)
-        self.entry_body.config(width=50, bg='#DCDCDC', border=0)
-        self.entry_body.grid(row=1, column=1, padx=5, pady=5)
-
-        #Este Segundo espacio para poner el link de la imagen
-        self.count_legal = tk.StringVar() #Guarda lo que ingresa en el campo
-        self.count_legal.set('')
-
-        self.entry_legal = tk.Entry(self.frame, textvariable = self.count_legal)
-        self.entry_legal.config(width=50, bg='#DCDCDC', border=0)
-        self.entry_legal.grid(row=1, column=2, padx=5, pady=5)
-
-        # Boton para obtener las cantidades
-        self.boton_save = tk.Button(self.frame, text='Cantidades', command=self.get_valor)
-        self.boton_save.config(width=50, border=0, fg='black', bg='#DCDCDC')
-        self.boton_save.grid(row=2, column=1)
-
-        # Boton para obtener las cantidades
-        self.boton_save = tk.Button(self.frame, text='Terminar', command=self.clean_frame)
-        self.boton_save.config(width=50, border=0, fg='black', bg='#DCDCDC')
-        self.boton_save.grid(row=2, column=0)
+    
+    # Crear el html
 
     def get_valor(self):
         head = self.entry_head.get()
         body = self.entry_body.get()
         legal = self.entry_legal.get()
+        
+        print(legal)
 
-        for i in range(int(head)):
-            #Este primer espacio para poner el link de la imagen
-            self.count_head = tk.StringVar() #Guarda lo que ingresa en el campo
-            self.count_head.set('')
+        # for i in range(int(head)):
+        #     #Este primer espacio para poner el link de la imagen
+        #     self.count_head = tk.StringVar() #Guarda lo que ingresa en el campo
+        #     self.count_head.set('')
 
-            self.entry_head = tk.Entry(self.frame, textvariable = self.count_head)
-            self.entry_head.config(width=50, bg='#DCDCDC', border=0)
-            self.entry_head.grid(row=i+3, column=0, padx=5, pady=5)
-            self.entry_head.bind('<Return>', self.obtener_contenido)
+        #     self.entry_head = tk.Entry(self.frame, textvariable = self.count_head)
+        #     self.entry_head.config(width=50, bg='#DCDCDC', border=0)
+        #     self.entry_head.grid(row=i+3, column=0, padx=5, pady=5)
+        #     self.entry_head.bind('<Return>', self.obtener_contenido)
 
 
+    # Funciones pequeñas, pero utiles
 
     def clean_frame(self):
         self.frame.destroy()
@@ -307,6 +280,13 @@ class Editor:
     def obtener_contenido(self,event):
         contenido = self.entry_head.get()
         print(contenido)
+
+    def new_windows(self):
+        window_html = tk.Tk()
+        window_html.title("Edit Html")
+        window_html.config(bg='#808080')
+
+        fr.create_html(ventana = window_html)
     
 
 
