@@ -1,4 +1,37 @@
-import fileinput
+from image_cut import get_path
+
+def make_a(path,html_name,list_image):
+    with open((path+"/"+html_name), "w") as output_file:
+      with open("guia.html", "r") as input_file:
+          
+          # Recorrer cada línea del archivo de entrada
+          for line in input_file:
+              # Escribir la línea en el archivo de salida
+              output_file.write(line)
+              
+              # Buscar la etiqueta <!--/Legal/-->
+              if "<!--/Contenido/-->" in line:
+
+                  for link_png in list_image:
+                  # Agregar el código después de la etiqueta
+                    output_file.write(f'''
+                      <a target="_blank"> 
+                        <table align="center" border="0" bgcolor="#1fc0bd" cellpadding="0" cellspacing="0" class="banner" width="600">
+                          <tr>
+                            <td>
+                              <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                  <td class="mobileBanner" height="100%" width="100%">
+                                    <img border="0" class="banner" src="{link_png}" style="display:block;" width="100%">
+                                  </td>
+                                </tr>
+                              </table>
+                            </td> 
+                          </tr>
+                        </table>
+                      </a>
+
+''')
 
 # Lista con las direcciones de las imágenes
 image_urls = [
@@ -7,30 +40,7 @@ image_urls = [
     "https://image.corp.fazil-app.com/lib/fe3911727564047d731776/m/23/ec6b7ede-610e-49a6-aa80-085d13c99db5.png"
 ]
 
-# Abrir el archivo en modo de lectura y escritura
-with fileinput.FileInput("guia.html", inplace=True, backup=".bak") as file:
-    # Recorrer cada línea del archivo
-    for line in file:
-        # Buscar la posición donde se encuentra la etiqueta <!--/Legal/-->
-        if "<!--/Legal/-->" in line:
-            # Agregar el código antes de la etiqueta
-            print(f'''
-              <a target="_blank"> 
-                <table align="center" border="0" bgcolor="#1fc0bd" cellpadding="0" cellspacing="0" class="banner" width="600">
-                  <tr>
-                    <td>
-                      <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                        <tr>
-                          <td class="mobileBanner" height="100%" width="100%">
-                            <img border="0" class="banner" src="{image_urls[0]}" style="display:block;" width="100%">
-                          </td>
-                        </tr>
-                      </table>
-                    </td> 
-                  </tr>
-                </table>
-              </a>
-              ''')
-        # Imprimir la línea actual
-        print(line, end='')
+path = get_path(False)
+
+make_a(path,'nuevo_mail', image_urls)
 

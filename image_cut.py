@@ -254,28 +254,48 @@ class Editor:
     
     # Crear el html
 
-    def get_valor(self):
-        head = self.entry_head.get()
-        body = self.entry_body.get()
-        legal = self.entry_legal.get()
-        
-        print(legal)
+    def create_html(self, continue_value = False, head_png = None, head_link = None,body_png = None,body_link = None,legal_content = None):
+        if continue_value == False:
+            def make_a(path,html_name,list_image):
+                with open((path+"/"+html_name), "w") as output_file:
+                    with open("guia.html", "r") as input_file:
+                        
+                        # Recorrer cada línea del archivo de entrada
+                        for line in input_file:
+                            # Escribir la línea en el archivo de salida
+                            output_file.write(line)
+                            
+                            # Buscar la etiqueta <!--/Legal/-->
+                            if "<!--/Contenido/-->" in line:
 
-        # for i in range(int(head)):
-        #     #Este primer espacio para poner el link de la imagen
-        #     self.count_head = tk.StringVar() #Guarda lo que ingresa en el campo
-        #     self.count_head.set('')
+                                for link_png in list_image:
+                                # Agregar el código después de la etiqueta
+                                    output_file.write(f'''
+                                    <a target="_blank"> 
+                                        <table align="center" border="0" bgcolor="#1fc0bd" cellpadding="0" cellspacing="0" class="banner" width="600">
+                                        <tr>
+                                            <td>
+                                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                <tr>
+                                                <td class="mobileBanner" height="100%" width="100%">
+                                                    <img border="0" class="banner" src="{link_png}" style="display:block;" width="100%">
+                                                </td>
+                                                </tr>
+                                            </table>
+                                            </td> 
+                                        </tr>
+                                        </table>
+                                    </a>
 
-        #     self.entry_head = tk.Entry(self.frame, textvariable = self.count_head)
-        #     self.entry_head.config(width=50, bg='#DCDCDC', border=0)
-        #     self.entry_head.grid(row=i+3, column=0, padx=5, pady=5)
-        #     self.entry_head.bind('<Return>', self.obtener_contenido)
+''')
+            path = get_path(False)
+            make_a(path,'nuevo_mail', head_png)
+
+        else:
+            pass
 
 
     # Funciones pequeñas, pero utiles
-
-    def clean_frame(self):
-        self.frame.destroy()
 
     def obtener_contenido(self,event):
         contenido = self.entry_head.get()

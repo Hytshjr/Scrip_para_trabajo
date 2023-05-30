@@ -205,15 +205,22 @@ class Frame(tk.Frame):
                         return link_png
                 
                 def test():
+
+                    import sys
+                    sys.path.append('../')
+                    from image_cut import Editor
+                    # print('jojojo')
+
+                    edit = Editor()
+
                     nonlocal head_png
                     nonlocal head_link
                     nonlocal body_png
                     nonlocal body_link
                     nonlocal legal_content
 
-                    print(head_png, head_link)
-                    print(body_png, body_link)
-                    print(legal_content)
+                    edit.create_html(head_png=head_png, head_link=head_link, body_png=body_png, body_link=body_link, legal_content=legal_content)
+                    
 
                     pass
                     
