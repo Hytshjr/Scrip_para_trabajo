@@ -1,4 +1,5 @@
 import time
+import fileinput
 import tkinter as tk
 from tkinter import messagebox as MessageBox
 
@@ -19,14 +20,18 @@ class Frame(tk.Frame):
         self.label_nombre.grid(row=0, column=0, padx=10, pady=15)
 
         # Entrys
-        with open("key_api.txt", "r") as file:
-            key = file.read()
+
+        with fileinput.FileInput('info.txt', inplace=False) as file:
+            for line in file:
+                if 'key' in line:
+                    key = line[line.rfind('=')+2:-3]
+
 
         self.compres_api = tk.StringVar() #Guarda lo que ingresa en el primer campo
         self.compres_api.set(key)
 
         self.entry_api = tk.Entry(self, textvariable = self.compres_api)
-        self.entry_api.config(width=20, bg='#808080')
+        self.entry_api.config(width=20, bg='#808080', state='disable')
         self.entry_api.grid(row=0, column=1)
 
         # Botones
@@ -79,27 +84,40 @@ class Frame(tk.Frame):
         entry_body.config(width=20, bg='#DCDCDC', border=0)
         entry_body.grid(row=1, column=1, padx=5, pady=5)
 
-        #Este Segundo espacio para poner el link de la imagen
+        #Este Tercer espacio para poner el link de la imagen
+        count_footer = tk.StringVar() #Guarda lo que ingresa en el campo
+        count_footer.set('')
+
+        entry_footer = tk.Entry(ventana, textvariable = count_footer)
+        entry_footer.config(width=20, bg='#DCDCDC', border=0)
+        entry_footer.grid(row=1, column=2, padx=5, pady=5)
+
+        #Este Cuarto espacio para poner el link de la imagen
         count_legal = tk.StringVar() #Guarda lo que ingresa en el campo
         count_legal.set('')
 
         entry_legal = tk.Entry(ventana, textvariable = count_legal)
         entry_legal.config(width=20, bg='#DCDCDC', border=0)
-        entry_legal.grid(row=1, column=2, padx=5, pady=5)
+        entry_legal.grid(row=1, column=3, padx=5, pady=5)
 
         def obtener_contenido():
             nonlocal ventana
             nonlocal entry_head
             nonlocal entry_body
+            nonlocal entry_footer
             nonlocal entry_legal
+
+            # ventana.clean_frame()
 
             head = entry_head.get()
             body = entry_body.get()
+            footer = entry_footer.get()
             legal = entry_legal.get()
 
             try:
                 head = int(head)
                 body = int(body)
+                footer = int(footer)
                 legal = int(legal)
 
                 int_pass = True
@@ -109,9 +127,9 @@ class Frame(tk.Frame):
 
             if int_pass == False:
                 MessageBox.showwarning("Alerta", 
-                "Solo ingrese valore numericos")
+                "Solo ingrese valores numericos")
 
-            else:
+            elif int_pass == True:
 
                 def create_get_content(count, position, link = True):
 
@@ -127,21 +145,15 @@ class Frame(tk.Frame):
 
                             try:
                                 for content_get in entry_content_png:
-                                    # print(content_get.get())
                                     link_png.append(content_get.get())
                             except:
                                 pass
 
                             try:
                                 for content_get in entry_content_link:
-                                    # print(content_get.get())
                                     link_app.append(content_get.get())
                             except:
                                 pass
-
-
-
-
 
                     if link == True:
 
@@ -217,51 +229,56 @@ class Frame(tk.Frame):
                     nonlocal head_link
                     nonlocal body_png
                     nonlocal body_link
+                    nonlocal footer_png
+                    nonlocal footer_link
                     nonlocal legal_content
+                    nonlocal title
 
-                    edit.create_html(head_png=head_png, head_link=head_link, body_png=body_png, body_link=body_link, legal_content=legal_content)
-                    
-
-                    pass
+                    edit.make_html(head_png=head_png, head_link=head_link, body_png=body_png, body_link=body_link, footer_png = footer_png, footer_link = footer_link, legal_content=legal_content, title = title) #legal_content=legal_content)
                     
 
                 head_png,head_link = create_get_content(head,3)
                 body_png,body_link = create_get_content(body,(head+3+1+1))
-                legal_content = create_get_content(legal,(head+body+3+3), False)
+                footer_png, footer_link = create_get_content(footer,(head+body+3+3))
+                legal_content = create_get_content(legal,(head+body+11+1), False)
+                title = create_get_content(1,(head+body+11+7), False)
 
                 # Boton para obtener las cantidades
                 boton_save = tk.Button(ventana, text='Hacer HTML', command=test)
                 boton_save.config(width=50, border=0, fg='black', bg='#DCDCDC')
-                boton_save.grid(row=body+head+legal+9, column=0, columnspan=3, pady=10)
+                boton_save.grid(row=body+head+legal+footer+11+8, column=0, columnspan=3, pady=10)
 
         def close():
             ventana.destroy()
 
         # BOTONES
-
         # Boton para obtener las cantidades
-        boton_save = tk.Button(ventana, text='Cantidades', command=obtener_contenido)
+        boton_save = tk.Button(ventana, text='Mostrar', command=obtener_contenido)
         boton_save.config(width=20, border=0, fg='black', bg='#DCDCDC')
-        boton_save.grid(row=2, column=1,columnspan=2)
+        boton_save.grid(row=2, column=2,columnspan=2)
 
-        # Boton para obtener las cantidades
+        # Boton para cerrar la ventana
         boton_save = tk.Button(ventana, text='Cerrar', command=close)
         boton_save.config(width=20, border=0, fg='black', bg='#DCDCDC')
-        boton_save.grid(row=2, column=0, columnspan=1)
+        boton_save.grid(row=2, column=1, columnspan=1)
         
-        
-    
-    # def obtener_contenido(self,event):
-    #     contenido = event.get()
-    #     print(contenido)
-    #     return contenido
 
     def guardar_api(self):
+        import fileinput
+
         self.entry_api.config(state='disable')
         key = self.compres_api.get()
 
-        with open("key_api.txt", "w") as file:
-            file.write(key)
+        with fileinput.FileInput('info.txt', inplace=True) as file:
+                # Recorrer cada línea del archivo de entrada
+                for line in file:   
+                              
+                    # Buscar la etiqueta <!--/Legal/-->
+                    if 'key' in line:
+                      print(f'''key = {key}''')
+                    
+                    else:
+                      print(line,end='')  
     
     def replace_api(self):
         self.compres_api.set('')

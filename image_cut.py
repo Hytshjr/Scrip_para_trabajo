@@ -4,6 +4,7 @@ from tkinter import filedialog
 import tkinter as tk
 import numpy as np
 import tinify
+import time
 import glob
 import cv2
 import os
@@ -17,6 +18,7 @@ def get_path(archivo = True):
     elif archivo == False:
         file_path = filedialog.askdirectory()
         return file_path
+
     
 def dist_maker(file_path, dist_name, ruta_herencia = True):
     if ruta_herencia == True:
@@ -34,12 +36,59 @@ def dist_maker(file_path, dist_name, ruta_herencia = True):
             os.makedirs(file_path+'/'+dist_name)
             return file_path+'/'+dist_name
 
+def descomprimir(path):
+    extention = path[path.rfind('.'):]
+    carpeta = path[:path.rfind('/')]
+    nombre = path[path.rfind('/')+1:-4]
+    
+    if extention == '.zip':
+        import zipfile
+        import os
+
+        with zipfile.ZipFile(path,'r') as zf:
+            zf.extractall(path=carpeta)
+            os.remove(path)
+
+        archivos = os.listdir(carpeta)
+
+        for archivo in archivos:
+            if nombre in archivo:
+                return carpeta+'/'+archivo 
+
+    elif extention == '.rar':
+        import rarfile
+
+        with rarfile.RarFile(path) as rf:
+            rf.extractall(path=(carpeta))
+            os.remove(path)
+
+        archivos = os.listdir(carpeta)
+
+        for archivo in archivos:
+            if nombre in archivo:
+                return carpeta+'/'+archivo     
+
+    else:
+        return path
+
+def buscador(archivo, etiqueta, final_content = -2):
+    import fileinput
+
+    with fileinput.FileInput(archivo, inplace=False) as file:
+                for line in file:
+                    if etiqueta in line:
+                        key = line[line.rfind('=')+2:final_content]
+    
+    return key
+
+
 class Editor:
     def __init__(self, root = None, path = None):
         
         self.root = root
         self.path = path
     
+    # Cortar las imagenes
     def cut_image(self):
         def mouse_track(event,x,y,flags,param):
             nonlocal size_img
@@ -93,6 +142,10 @@ class Editor:
             # Declaramos las variables de guia e iniciamos la funcion para el mouse
             file_path = get_path()
 
+            file_path = descomprimir(file_path)
+
+            # if file_path != None:
+
             imagen = cv2.imread(file_path)
 
             copy_image = imagen.copy()
@@ -113,11 +166,7 @@ class Editor:
 
             cv2.namedWindow('Imagen')
             cv2.setMouseCallback('Imagen',mouse_track)
-        
-        except NameError as e:
-            print(e, 'Error en la parte de seleccion de archivo')
 
-        try:
             while True:
                 k = cv2.waitKey(10) & 0xFF
 
@@ -138,14 +187,11 @@ class Editor:
                     break
 
             size_cut = len(pxl_save)
-        
-        except NameError as e:
-            print(e)
+    
+            count_cut = 0
+            imageOut = []
 
-        count_cut = 0
-        imageOut = []
 
-        try:
             while count_cut < size_cut:
 
                 top = pxl_save[count_cut][0] #Define o indica la altura del corte
@@ -156,151 +202,349 @@ class Editor:
 
                 count_cut += 1
 
-        except ValueError as e:
-            print(e)
 
-        imageOut.append(copy_image[bottom:size_img[0], 0:right])
+            imageOut.append(copy_image[bottom:size_img[0], 0:right])
 
-        posicion_ultima_barra = file_path.rfind("/")
-        directorio = file_path[:posicion_ultima_barra]
-        name_image = file_path[posicion_ultima_barra + 1:-4]
-        ruta_carpeta = directorio+'/images'
+            posicion_ultima_barra = file_path.rfind("/")
+            directorio = file_path[:posicion_ultima_barra]
+            name_image = file_path[posicion_ultima_barra + 1:-4]
+            ruta_carpeta = directorio+'/images'
 
-        self.path = ruta_carpeta
+            self.path = ruta_carpeta
 
-        for index in range(len(imageOut)):
+            for index in range(len(imageOut)):
 
-            if not os.path.exists(ruta_carpeta):
-                os.makedirs(ruta_carpeta)
+                list_int = index+1
 
-                name = f'{ruta_carpeta}/{name_image}_{index}.png'
+                if not os.path.exists(ruta_carpeta):
+                    os.makedirs(ruta_carpeta)
 
-                cv2.imwrite(name, imageOut[index])
+                    name = f'{ruta_carpeta}/{name_image}_{list_int}.png'
 
-            else:
-                name = f'{ruta_carpeta}/{name_image}_{index}.png'
+                    cv2.imwrite(name, imageOut[index])
 
-                cv2.imwrite(name, imageOut[index])
-        
-        cv2.destroyAllWindows()
-        
+                else:
+                    name = f'{ruta_carpeta}/{name_image}_{list_int}.png'
 
-        for i in range(len(imageOut)):
-            condicion = True
-
-            while condicion:
-                cv2.imshow('Imagen de salida',imageOut[i])
-
-                b = cv2.waitKey(1) & 0xFF
-
-                if b == ord('a'):
-                    break
-
-                if b == 27:
-                    condicion = False  # Actualiza la variable de control del ciclo while
-                    break  # Rompe el ciclo while
-
+                    cv2.imwrite(name, imageOut[index])
             
-            if not condicion:
-                cv2.destroyAllWindows()
-                break
+            cv2.destroyAllWindows()
+            
+
+            for i in range(len(imageOut)):
+                condicion = True
+
+                while condicion:
+                    cv2.imshow('Imagen de salida',imageOut[i])
+
+                    b = cv2.waitKey(1) & 0xFF
+
+                    if b == ord('a'):
+                        break
+
+                    if b == 27:
+                        condicion = False  # Actualiza la variable de control del ciclo while
+                        break  # Rompe el ciclo while
+
+                
+                if not condicion:
+                    cv2.destroyAllWindows()
+                    break
+            # elif file_path == None:
+            #     print('goo')
+        
+        except:
+            pass
     
     # Comprimir las imagenes
-
     def compress(self, continuar = True):
+        import fileinput
 
-        with open("key_api.txt", "r") as file:
-            key = file.read()
+        try:
+            with fileinput.FileInput('info.txt', inplace=False) as file:
+                for line in file:
+                    if 'key' in line:
+                        key = line[line.rfind('=')+2:-2]
 
-        if key == None or key == '':
-            
-            MessageBox.showwarning("Alerta", 
-            "No has agregado la api")
-        
-        elif continuar == True:            
-            directorio_path = get_path(archivo = False)
-
-            # Obtener la lista de archivos en la carpeta
-            archivos = glob.glob(directorio_path + '/*')
-            directorio_path_save = get_path(archivo = False)
-            compress_save = dist_maker(directorio_path_save,'compress', False)
-
-            # Imprimir los nombres de los archivos
-            for archivo in archivos:
+            if key == None or key == '':
                 
-                position = archivo.rfind("/")
-                name_file = archivo[position + 1:]
+                MessageBox.showwarning("Alerta", 
+                "No has agregado la api")
+            
+            elif continuar == True:            
+                directorio_path = get_path(archivo = False)
 
-                ruta_guardado = compress_save+'/'+name_file
+                # Obtener la lista de archivos en la carpeta
+                archivos = glob.glob(directorio_path + '/*')
+                directorio_path_save = get_path(archivo = False)
+                compress_save = dist_maker(directorio_path_save,'compress', False)
 
-                tinify.key = key
-                source = tinify.from_file(archivo)
-                source.to_file(ruta_guardado)
+                # Imprimir los nombres de los archivos
+                for archivo in archivos:
+                    
+                    position = archivo.rfind("/")
+                    name_file = archivo[position + 1:]
 
-        elif continuar  == False:
-            archivos = glob.glob(self.path + '/*')
-            compress_save = dist_maker(self.path,'compress')
+                    ruta_guardado = compress_save+'/'+name_file
 
-            # Imprimir los nombres de los archivos
-            for archivo in archivos:
-                position = archivo.rfind("/")
-                name_file = archivo[position + 1:]
+                    tinify.key = key
+                    source = tinify.from_file(archivo)
+                    source.to_file(ruta_guardado)
 
-                ruta_guardado = compress_save+'/'+name_file
+            elif continuar  == False:
+                archivos = glob.glob(self.path + '/*')
+                compress_save = dist_maker(self.path,'compress')
 
-                tinify.key = key
-                source = tinify.from_file(archivo)
-                source.to_file(ruta_guardado)
+                # Imprimir los nombres de los archivos
+                for archivo in archivos:
+                    position = archivo.rfind("/")
+                    name_file = archivo[position + 1:]
+
+                    ruta_guardado = compress_save+'/'+name_file
+
+                    tinify.key = key
+                    source = tinify.from_file(archivo)
+                    source.to_file(ruta_guardado)
+        except:
+            pass
     
     # Crear el html
+    def make_html(self, continue_value = False, head_png = None, head_link = None,body_png = None,body_link = None,legal_content = None, footer_png = None, footer_link = None, title = None):
+        def make_a(path,list_png, list_link, position, inicio = False, Legal = False):
+                comparacion = "<!--/"+position+"/-->"
+                path_file = path+"/"+title[0]+".html"
 
-    def create_html(self, continue_value = False, head_png = None, head_link = None,body_png = None,body_link = None,legal_content = None):
-        if continue_value == False:
-            def make_a(path,html_name,list_image):
-                with open((path+"/"+html_name), "w") as output_file:
-                    with open("guia.html", "r") as input_file:
-                        
-                        # Recorrer cada línea del archivo de entrada
-                        for line in input_file:
-                            # Escribir la línea en el archivo de salida
-                            output_file.write(line)
+                if inicio  == False and Legal == False:
+                    import fileinput
+
+                    if list_link[0] == '':
+                        with fileinput.FileInput(path_file, inplace=True, backup=False) as file:
+                            # Recorrer cada línea del archivo de entrada
+                            for line in file:
+                                print(line,end='')
+                                
+                                # Buscar la etiqueta <!--/Legal/-->
+                                if comparacion in line:
+
+                                    for link_png in list_png:
+                                    # Agregar el código después de la etiqueta
+                                        print(f'''
+                <a target="_blank"> 
+                    <table align="center" border="0" bgcolor="#1fc0bd" cellpadding="0" cellspacing="0" class="banner" width="600">
+                        <tr>
+                            <td>
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                <td class="mobileBanner" height="100%" width="100%">
+                                    <img border="0" class="banner" src="{link_png}" style="display:block;" width="100%">
+                                </td>
+                                </tr>
+                            </table>
+                            </td> 
+                        </tr>
+                    </table>
+                </a>                
+                                
+''')
+                                                        
+                    elif list_link[0] != '':
+                        with fileinput.FileInput(path_file, inplace=True,backup=False) as file:
+                            # Recorrer cada línea del archivo de entrada
+                            for line in file:
+                                print(line,end='')
                             
-                            # Buscar la etiqueta <!--/Legal/-->
-                            if "<!--/Contenido/-->" in line:
-
-                                for link_png in list_image:
-                                # Agregar el código después de la etiqueta
-                                    output_file.write(f'''
-                                    <a target="_blank"> 
-                                        <table align="center" border="0" bgcolor="#1fc0bd" cellpadding="0" cellspacing="0" class="banner" width="600">
-                                        <tr>
-                                            <td>
-                                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                                                <tr>
-                                                <td class="mobileBanner" height="100%" width="100%">
-                                                    <img border="0" class="banner" src="{link_png}" style="display:block;" width="100%">
-                                                </td>
-                                                </tr>
-                                            </table>
-                                            </td> 
-                                        </tr>
-                                        </table>
-                                    </a>
+                                # Buscar la etiqueta <!--/Legal/-->
+                                if comparacion in line:
+                        
+                                    for index,link_png  in enumerate(list_png):
+                                    # Agregar el código después de la etiqueta
+                                        print(f'''
+                <a href="{list_link[index]}" target="_blank"> 
+                    <table align="center" border="0" bgcolor="#1fc0bd" cellpadding="0" cellspacing="0" class="banner" width="600">
+                        <tr>
+                            <td>
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                <td class="mobileBanner" height="100%" width="100%">
+                                    <img border="0" class="banner" src="{link_png}" style="display:block;" width="100%">
+                                </td>
+                                </tr>
+                            </table>
+                            </td> 
+                        </tr>
+                    </table>
+                </a>
 
 ''')
+                                        
+                elif Legal == True and inicio == False:
+                    import fileinput
+
+                    with fileinput.FileInput(path_file, inplace=True) as file:
+                        # Recorrer cada línea del archivo de entrada
+                        for line in file:
+                            print(line,end='')
+                        
+                            # Buscar la etiqueta <!--/Legal/-->
+                            if position in line:
+                    
+                                for link_png  in list_png:
+                                # Agregar el código después de la etiqueta
+                                    print(f'''                      {link_png}''')
+                                            
+                elif inicio == True:
+                                
+                    if list_link[0] == '':
+                        with open((path+"/"+title[0]+".html"), "w") as output_file:
+                            with open("guia.html", "r") as input_file:
+                                
+                                # Recorrer cada línea del archivo de entrada
+                                for line in input_file:
+                                    # Escribir la línea en el archivo de salida
+                                    output_file.write(line)
+                                    
+                                    # Buscar la etiqueta <!--/Legal/-->
+                                    if comparacion in line:
+
+                                        for link_png in list_png:
+                                            output_file.write(f'''
+                <a target="_blank"> 
+                    <table align="center" border="0" bgcolor="#1fc0bd" cellpadding="0" cellspacing="0" class="banner" width="600">
+                        <tr>
+                            <td>
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                <td class="mobileBanner" height="100%" width="100%">
+                                    <img border="0" class="banner" src="{link_png}" style="display:block;" width="100%">
+                                </td>
+                                </tr>
+                            </table>  
+                            </td> 
+                        </tr>
+                    </table>
+                </a>
+                                
+''')
+
+                                                        
+                    elif list_link[0] != '':
+                        with open((path+"/"+title[0]+".html"), "w") as output_file:
+                            with open("guia.html", "r") as input_file:
+
+                                
+                                # Recorrer cada línea del archivo de entrada
+                                for line in input_file:
+                                    # Escribir la línea en el archivo de salida
+                                    output_file.write(line)
+                                    
+                                    # Buscar la etiqueta <!--/Legal/-->
+                                    if comparacion in line:
+
+                                        for index,link_png  in enumerate(list_png):
+                                        # Agregar el código después de la etiqueta
+                                            output_file.write(f'''
+                <a href="{list_link[index]}" target="_blank"> 
+                    <table align="center" border="0" bgcolor="#1fc0bd" cellpadding="0" cellspacing="0" class="banner" width="600">
+                        <tr>
+                            <td>
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                <td class="mobileBanner" height="100%" width="100%">
+                                    <img border="0" class="banner" src="{link_png}" style="display:block;" width="100%">
+                                </td>
+                                </tr>
+                            </table>
+                            </td> 
+                        </tr>
+                    </table>
+                </a>
+
+''')
+                                            
+        
+        if continue_value == False:
             path = get_path(False)
-            make_a(path,'nuevo_mail', head_png)
 
-        else:
+            make_a(path, head_png, head_link, 'Head',inicio=True)
+            make_a(path, body_png, body_link, 'Contenido')
+            make_a(path,footer_png, footer_link, 'Footer')
+            make_a(path= path,position='<p>',list_png= legal_content,list_link= head_link, Legal=True, inicio=False)
+            make_a(path, title, head_link,'<title>', Legal=True, inicio=False)
+
+        elif continue_value == True:
             pass
+    
+    # Crea el navegador de senelium
+    def create_navegador(self):
+        from selenium import webdriver
+        from selenium.webdriver.chrome.service import Service
+        from selenium.webdriver.chrome.options import Options
+
+        # Ruta al controlador de Chrome
+        PATH = 'drivers_chrome/chromedriver'
+
+        # Opciones del navegador Chrome
+        options = Options()
+
+        # Inicializar el servicio del controlador
+        service = Service(PATH)
+
+        # Inicializar el driver de Chrome
+        driver = webdriver.Chrome(service=service, options=options)
+        return driver
 
 
-    # Funciones pequeñas, pero utiles
+    # Verificar si esto logeado
+    def verify_log(self):
+        
+        from selenium.webdriver.common.by import By
+        from selenium.webdriver.common.keys import Keys
+        
 
-    def obtener_contenido(self,event):
-        contenido = self.entry_head.get()
-        print(contenido)
+        link = 'https://mcrtlgjr-g-gwpsc952zwcc7q2vy.login.exacttarget.com/hub-cas/login?wl=Niw2MDAwMTAzOCxmZTZk0&service=https%3a%2f%2fmc.s6.exacttarget.com%2fcloud%2flogin.html%3fhash%3dOrEn1bG9nZ2VkLWluSXc9PQ2'
 
+        
+
+        
+        # options.add_argument("--start-maximized")  # Iniciar maximizado (opcional)
+
+        
+
+        
+
+        driver.get(link)
+        time.sleep(2)
+
+        content = driver.find_element(By.XPATH,'//form[@id="LoginForm"]')
+
+        if 'Nombre de usuario' in content.text or 'Recordarme' in content.text:
+            print('not login')
+            
+            username = driver.find_element(By.XPATH,'//input[@id="username"]')
+            user = buscador('info.txt', 'user')
+            username.send_keys(user)
+
+            submit_name = driver.find_element(By.XPATH,'//input[@id="submit-btn"]')
+            submit_name.click()
+
+            time.sleep(2)
+
+            password_form = driver.find_element(By.XPATH,'//input[@id="password"]')
+            password = buscador('info.txt', 'Pass')
+            password_form.send_keys(password)
+
+            submit_pass = driver.find_element(By.XPATH,'//input[@id="submit-btn"]')
+            submit_pass.click()
+        
+        navegador = True
+
+        while navegador == True:
+            time.sleep(1)
+            navegador = navegador_boolean()
+
+
+
+    
     def new_windows(self):
         window_html = tk.Tk()
         window_html.title("Edit Html")

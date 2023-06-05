@@ -1,0 +1,25 @@
+{'domain': '.crunchyroll.com', 'expiry': 1720545640, 'httpOnly': False, 'name': 'ab.storage.deviceId.80f403d2-1c18-471d-b0ef-243d1d646436', 'path': '/', 'sameSite': 'Lax', 'secure': False, 'value': '%7B%22g%22%3A%222e32bcff-90d3-2d57-a69a-bc30e8bf5bbd%22%2C%22c%22%3A1685985640070%2C%22l%22%3A1685985640070%7D'}
+{'domain': '.crunchyroll.com', 'expiry': 1719681639, 'httpOnly': False, 'name': '_ttp', 'path': '/', 'sameSite': 'Lax', 'secure': False, 'value': 'SwrMrdeLrI0ZvHhwmGhK7Eyb5Pt'}
+{'domain': 'www.crunchyroll.com', 'expiry': 1685986540, 'httpOnly': False, 'name': '_dd_s', 'path': '/', 'sameSite': 'Strict', 'secure': False, 'value': 'rum=0&expire=1685986538229'}
+{'domain': '.crunchyroll.com', 'expiry': 1719681639, 'httpOnly': False, 'name': '_tt_enable_cookie', 'path': '/', 'sameSite': 'Lax', 'secure': False, 'value': '1'}
+{'domain': '.crunchyroll.com', 'httpOnly': True, 'name': '__cfruid', 'path': '/', 'sameSite': 'None', 'secure': True, 'value': 'e0727e9445a0da65c5520ca161cea1ddca8bae99-1685985628'}
+{'domain': '.crunchyroll.com', 'expiry': 1720545638, 'httpOnly': False, 'name': '_ga_SYYQC1VW88', 'path': '/', 'sameSite': 'Lax', 'secure': False, 'value': 'GS1.1.1685985631.1.1.1685985638.53.0.0'}
+{'domain': '.crunchyroll.com', 'expiry': 1717521635, 'httpOnly': True, 'name': 'etp_rt', 'path': '/', 'sameSite': 'Lax', 'secure': False, 'value': '75128679-ae64-46db-abd3-1cbacd20fff0'}
+{'domain': '.crunchyroll.com', 'expiry': 1717521639, 'httpOnly': False, 'name': 'ajs_anonymous_id', 'path': '/', 'sameSite': 'Lax', 'secure': False, 'value': '3361ea42-4211-4747-8892-6a6ef5da2355'}
+{'domain': '.crunchyroll.com', 'expiry': 1720545640, 'httpOnly': False, 'name': 'ab.storage.userId.80f403d2-1c18-471d-b0ef-243d1d646436', 'path': '/', 'sameSite': 'Lax', 'secure': False, 'value': '%7B%22g%22%3A%22d0ffa39b-017b-5df0-a42c-913817fde37b%22%2C%22c%22%3A1685985640065%2C%22l%22%3A1685985640068%7D'}
+{'domain': '.crunchyroll.com', 'expiry': 1693761631, 'httpOnly': False, 'name': '_gcl_au', 'path': '/', 'sameSite': 'Lax', 'secure': False, 'value': '1.1.1263814841.1685985631'}
+{'domain': '.crunchyroll.com', 'expiry': 1720545640, 'httpOnly': False, 'name': 'ab.storage.sessionId.80f403d2-1c18-471d-b0ef-243d1d646436', 'path': '/', 'sameSite': 'Lax', 'secure': False, 'value': '%7B%22g%22%3A%2231e93dfa-48dd-bfd6-44bf-707b151c2232%22%2C%22e%22%3A1685987440075%2C%22c%22%3A1685985640067%2C%22l%22%3A1685985640075%7D'}
+{'domain': '.crunchyroll.com', 'expiry': 1686072035, 'httpOnly': False, 'name': 'authid', 'path': '/', 'sameSite': 'Lax', 'secure': False, 'value': 'pc979uLrYcRPSq85w7ujbCu8rEyldcE26ya-DmfS'}
+{'domain': '.crunchyroll.com', 'expiry': 1720545638, 'httpOnly': False, 'name': '_ga', 'path': '/', 'sameSite': 'Lax', 'secure': False, 'value': 'GA1.1.1580749546.1685985632'}
+{'domain': '.crunchyroll.com', 'expiry': 1685987428, 'httpOnly': True, 'name': '__cf_bm', 'path': '/', 'sameSite': 'None', 'secure': True, 'value': 'lmAulgY6GGy0kTSbGNATSK.EkIOA7CBdXczWXFxAutQ-1685985628-0-Abblf+odhN//tQXB65cQS0WXLiIfNkpi/3hNjhdOakBkw4Z1tGpjA/BaLuqmiD7vNPSXukNJi7wJdG5/iWkvSkZOS3YISo4AzkQ2Q01wGTqH'}
+{'domain': '.crunchyroll.com', 'expiry': 1717521639, 'httpOnly': False, 'name': 'ajs_user_id', 'path': '/', 'sameSite': 'Lax', 'secure': False, 'value': 'd0ffa39b-017b-5df0-a42c-913817fde37b'}
+
+
+{'domain': 'sso.crunchyroll.com', 'expiry': 1685986419, 'httpOnly': False, 'name': '_dd_s', 'path': '/', 'sameSite': 'Strict', 'secure': False, 'value': 'rum=1&id=d17c15d2-97a5-4b89-b57a-70cb085e9557&created=1685985516525&expire=1685986416525'}
+{'domain': '.crunchyroll.com', 'expiry': 1720545517, 'httpOnly': False, 'name': '_ga_SYYQC1VW88', 'path': '/', 'sameSite': 'Lax', 'secure': False, 'value': 'GS1.1.1685985517.1.0.1685985517.60.0.0'}
+{'domain': '.crunchyroll.com', 'expiry': 1717521517, 'httpOnly': False, 'name': 'ajs_anonymous_id', 'path': '/', 'sameSite': 'Lax', 'secure': False, 'value': '8fcc3baa-40d0-4ed8-9700-88b13117804b'}
+{'domain': '.crunchyroll.com', 'expiry': 1693761516, 'httpOnly': False, 'name': '_gcl_au', 'path': '/', 'sameSite': 'Lax', 'secure': False, 'value': '1.1.812384947.1685985517'}
+{'domain': '.crunchyroll.com', 'httpOnly': True, 'name': '__cfruid', 'path': '/', 'sameSite': 'None', 'secure': True, 'value': 'a127bd68166766bdc9635c1f944419dae9d16689-1685985513'}
+{'domain': '.crunchyroll.com', 'expiry': 1686071913, 'httpOnly': False, 'name': 'authid', 'path': '/', 'sameSite': 'Lax', 'secure': False, 'value': '8YxvWrjIM2BO8DwUAXc-YwZaOLF0FX6rzFAGXa1n'}
+{'domain': '.crunchyroll.com', 'expiry': 1685987313, 'httpOnly': True, 'name': '__cf_bm', 'path': '/', 'sameSite': 'None', 'secure': True, 'value': 'LRMrCTdIAtPViYrlWlAPwycGW1OWpd8p2pCgrhnhC.s-1685985513-0-ATNCB/WCZXtNqo2PLpjhtXIZ1v32OUwDnUTeGm22IH5eJ2aLmU0RnA9ODYIwznYHcfbHcYAhNCQKwGEzQgFs3hqMS/g4HJdGCg+KY3YmNp+/'}
+{'domain': '.crunchyroll.com', 'expiry': 1720545517, 'httpOnly': False, 'name': '_ga', 'path': '/', 'sameSite': 'Lax', 'secure': False, 'value': 'GA1.1.1169854723.1685985517'}
