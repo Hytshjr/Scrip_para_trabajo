@@ -29,11 +29,17 @@ def dist_maker(file_path, dist_name, ruta_herencia = True):
 
         if not os.path.exists(ruta_carpeta):
             os.makedirs(ruta_carpeta)
-
             return ruta_carpeta
+        
+        else:
+            return ruta_carpeta
+
     else:
         if not os.path.exists(file_path+'/'+dist_name):
             os.makedirs(file_path+'/'+dist_name)
+            return file_path+'/'+dist_name
+        
+        elif os.path.exists(file_path+'/'+dist_name):
             return file_path+'/'+dist_name
 
 def descomprimir(path):
@@ -45,15 +51,39 @@ def descomprimir(path):
         import zipfile
         import os
 
+        nombre_space = nombre.replace('_',' ')
+        nombre_space = nombre_space.replace('-',' ')
+        nopmbre_split = nombre_space.split()
+
         with zipfile.ZipFile(path,'r') as zf:
             zf.extractall(path=carpeta)
             os.remove(path)
 
         archivos = os.listdir(carpeta)
+        images_count = 0
 
         for archivo in archivos:
-            if nombre in archivo:
-                return carpeta+'/'+archivo 
+            if archivo[archivo.rfind('.'):] == '.png' or archivo[archivo.rfind('.'):] == '.jpg':
+                images_count += 1
+
+        if images_count != 1:
+            MessageBox.showwarning("Error",
+                "Existe màs de una imagen en el comprimido, usa seleccion manual")
+            
+            file_path = get_path()
+            return file_path
+        
+        elif images_count == 1:
+            for archivo in archivos:
+                name_validation = 0
+
+                for word in nopmbre_split:
+                    if word in archivo:
+                        name_validation += 1
+                    
+                if name_validation >= len(nopmbre_split)-2 and archivo[archivo.rfind('.'):] == '.png' or archivo[archivo.rfind('.'):] == '.jpg':
+                    return carpeta+'/'+archivo 
+
 
     elif extention == '.rar':
         import rarfile
@@ -63,10 +93,29 @@ def descomprimir(path):
             os.remove(path)
 
         archivos = os.listdir(carpeta)
+        images_count = 0
 
         for archivo in archivos:
-            if nombre in archivo:
-                return carpeta+'/'+archivo     
+            if archivo[archivo.rfind('.'):] == '.png' or archivo[archivo.rfind('.'):] == '.jpg':
+                images_count += 1
+
+        if images_count != 1:
+            MessageBox.showwarning("Error",
+                "Existe màs de una imagen en el comprimido, usa seleccion manual")
+            
+            file_path = get_path()
+            return file_path
+        
+        elif images_count == 1:
+            for archivo in archivos:
+                name_validation = 0
+
+                for word in nopmbre_split:
+                    if word in archivo:
+                        name_validation += 1
+                    
+                if name_validation >= len(nopmbre_split)-2 and archivo[archivo.rfind('.'):] == '.png' or archivo[archivo.rfind('.'):] == '.jpg':
+                    return carpeta+'/'+archivo    
 
     else:
         return path
@@ -143,8 +192,6 @@ class Editor:
             file_path = get_path()
 
             file_path = descomprimir(file_path)
-
-            # if file_path != None:
 
             imagen = cv2.imread(file_path)
 
@@ -275,21 +322,23 @@ class Editor:
                 directorio_path = get_path(archivo = False)
 
                 # Obtener la lista de archivos en la carpeta
-                archivos = glob.glob(directorio_path + '/*')
+                archivos = os.listdir(directorio_path)
                 directorio_path_save = get_path(archivo = False)
                 compress_save = dist_maker(directorio_path_save,'compress', False)
 
                 # Imprimir los nombres de los archivos
                 for archivo in archivos:
                     
-                    position = archivo.rfind("/")
-                    name_file = archivo[position + 1:]
+                    position = archivo.rfind(".")
+                    extension = archivo[position:]
+                    
+                    if extension == '.png' or extension == '.jpg':
+                        
+                        ruta_guardado = compress_save
 
-                    ruta_guardado = compress_save+'/'+name_file
-
-                    tinify.key = key
-                    source = tinify.from_file(archivo)
-                    source.to_file(ruta_guardado)
+                        tinify.key = key
+                        source = tinify.from_file(directorio_path+'/'+archivo)
+                        source.to_file(compress_save+'/'+archivo)
 
             elif continuar  == False:
                 archivos = glob.glob(self.path + '/*')
@@ -305,8 +354,9 @@ class Editor:
                     tinify.key = key
                     source = tinify.from_file(archivo)
                     source.to_file(ruta_guardado)
-        except:
-            pass
+        except NameError as e:
+            print(e)
+            
     
     # Crear el html
     def make_html(self, continue_value = False, head_png = None, head_link = None,body_png = None,body_link = None,legal_content = None, footer_png = None, footer_link = None, title = None):

@@ -56,14 +56,14 @@ class Frame(tk.Frame):
         self.boton_replpace.config(width=40, border=0, fg='black', bg='#DCDCDC')
         self.boton_replpace.grid(row=3, column=0, pady=3, columnspan=2)
 
-        #Este boton hace el proceso de corte y compresion
-        self.boton_replpace = tk.Button(self, text='Corte y compresion de imagen', command=self.cut_compress)
-        self.boton_replpace.config(width=40, border=0, fg='black', bg='#DCDCDC')
-        self.boton_replpace.grid(row=4, column=0, pady=3, columnspan=2)
-
         #Este boton crea el nuevo frame para hacer el html
         self.boton_replpace = tk.Button(self, text='Hacer el html', command=self.clase.new_windows)
         self.boton_replpace.config(width=40, border=0)
+        self.boton_replpace.grid(row=4, column=0, pady=3, columnspan=2)
+
+                #Este boton hace el proceso de corte y compresion
+        self.boton_replpace = tk.Button(self, text='Corte y compresion de imagen', command=self.cut_compress)
+        self.boton_replpace.config(width=40, border=0, fg='black', bg='#DCDCDC')
         self.boton_replpace.grid(row=5, column=0, pady=3, columnspan=2)
 
     def create_html(ventana):
