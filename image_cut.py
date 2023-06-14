@@ -3,6 +3,7 @@ from Fazil.gui_app import Frame as fr
 from tkinter import filedialog
 import tkinter as tk
 import numpy as np
+import fileinput
 import tinify
 import time
 import glob
@@ -190,13 +191,10 @@ class Editor:
         try:
             # Declaramos las variables de guia e iniciamos la funcion para el mouse
             file_path = get_path()
-
             file_path = descomprimir(file_path)
-
             imagen = cv2.imread(file_path)
 
             copy_image = imagen.copy()
-
             size_img = imagen.shape
 
             if size_img != None:
@@ -205,104 +203,119 @@ class Editor:
 
             pxl_save = []
 
-            imagen_alto = size_img[0]
             window_height = 1080
-            rect_pts = []
             img_pos = 0
             count = 0
+            cerrar = False
 
-            cv2.namedWindow('Imagen')
-            cv2.setMouseCallback('Imagen',mouse_track)
+            # cv2.namedWindow('Imagen')
+            cv2.imshow('Imagen', imagen)
+            cv2.setMouseCallback('Imagen',mouse_track)  
 
+
+            # Esto guarda y limpia la mesa de trabajo
             while True:
-                k = cv2.waitKey(10) & 0xFF
+                k = cv2.waitKey(1)
 
                 if k == ord('l'): # Limpiar el contenido de la imagen
                     imagen = cv2.imread(file_path)
-                    rect_pts = []
                     pxl_save = []
                     count = 0
-
-                elif k == ord('f'):
-                    if len(rect_pts)==0 and len(pxl_save)==0:
-                        print('No tienes seleccion')
-                        break
+                
+                elif k == 27: # Limpiar el contenido de la imagen
+                    cerrar = True
+                    cv2.destroyAllWindows()
                     break
 
                 elif k == ord('s'):
                     cv2.destroyAllWindows()
                     break
-
+                
             size_cut = len(pxl_save)
     
             count_cut = 0
             imageOut = []
 
+            if cerrar == True:
+                pass
 
-            while count_cut < size_cut:
+            elif cerrar == False:
+                while count_cut < size_cut:
 
-                top = pxl_save[count_cut][0] #Define o indica la altura del corte
-                right = size_img[1] #Define el ancho de la imagen
-                bottom = pxl_save[count_cut][1] #Define el pixel que hemos seleccionado con el mouse para hacer el corte
+                    top = pxl_save[count_cut][0] #Define o indica la altura del corte
+                    right = size_img[1] #Define el ancho de la imagen
+                    bottom = pxl_save[count_cut][1] #Define el pixel que hemos seleccionado con el mouse para hacer el corte
 
-                imageOut.append(copy_image[top:bottom, 0:right])
+                    imageOut.append(copy_image[top:bottom, 0:right])
 
-                count_cut += 1
+                    count_cut += 1
+                
+                with fileinput.FileInput('info.txt', inplace=False) as file:
+                    for line in file:
+                        if 'last' in line:
+                            last = line[line.rfind('=')+2:-2]
+
+                if last == 'True':
+                    imageOut.append(copy_image[bottom:size_img[0], 0:right])
+
+                posicion_ultima_barra = file_path.rfind("/")
+                directorio = file_path[:posicion_ultima_barra]
+                name_image = file_path[posicion_ultima_barra + 1:-4]
+                ruta_carpeta = directorio+'/images'
+
+                self.path = ruta_carpeta
+
+                for index in range(len(imageOut)):
+
+                    list_int = index+1
+
+                    if not os.path.exists(ruta_carpeta):
+                        os.makedirs(ruta_carpeta)
+
+                        name = f'{ruta_carpeta}/{name_image}_{list_int}.png'
+
+                        cv2.imwrite(name, imageOut[index])
+
+                    else:
+                        name = f'{ruta_carpeta}/{name_image}_{list_int}.png'
+
+                        cv2.imwrite(name, imageOut[index])
+                
+                self.index = list_int
+
+                cv2.destroyAllWindows()
+                
+                # Esto muestra las imagens cortadas
+                for i in range(len(imageOut)):
+                    condicion = True
+                    if i+1 == len(imageOut):
+                        MessageBox.showwarning("Final", 
+                "Terminaron las imagenes")
+
+                    while condicion == True:
+                        cv2.imshow('Imagen de salida',imageOut[i])
+
+                        b = cv2.waitKey(1) & 0xFF
+
+                        if b == ord('a'):
+                            break
+
+                        if b == 27:
+                            condicion = False  # Actualiza la variable de control del ciclo while
 
 
-            imageOut.append(copy_image[bottom:size_img[0], 0:right])
+                        if i+1 == len(imageOut):
+                            if b == 27:
+                                break
 
-            posicion_ultima_barra = file_path.rfind("/")
-            directorio = file_path[:posicion_ultima_barra]
-            name_image = file_path[posicion_ultima_barra + 1:-4]
-            ruta_carpeta = directorio+'/images'
-
-            self.path = ruta_carpeta
-
-            for index in range(len(imageOut)):
-
-                list_int = index+1
-
-                if not os.path.exists(ruta_carpeta):
-                    os.makedirs(ruta_carpeta)
-
-                    name = f'{ruta_carpeta}/{name_image}_{list_int}.png'
-
-                    cv2.imwrite(name, imageOut[index])
-
-                else:
-                    name = f'{ruta_carpeta}/{name_image}_{list_int}.png'
-
-                    cv2.imwrite(name, imageOut[index])
-            
-            cv2.destroyAllWindows()
-            
-
-            for i in range(len(imageOut)):
-                condicion = True
-
-                while condicion:
-                    cv2.imshow('Imagen de salida',imageOut[i])
-
-                    b = cv2.waitKey(1) & 0xFF
-
-                    if b == ord('a'):
+                    if condicion != True:
+                        cv2.destroyAllWindows()
                         break
 
-                    if b == 27:
-                        condicion = False  # Actualiza la variable de control del ciclo while
-                        break  # Rompe el ciclo while
-
-                
-                if not condicion:
-                    cv2.destroyAllWindows()
-                    break
-            # elif file_path == None:
-            #     print('goo')
-        
-        except:
-            pass
+        except NameError as e:
+            print(e)
     
+
     # Comprimir las imagenes
     def compress(self, continuar = True):
         import fileinput
@@ -359,6 +372,7 @@ class Editor:
             
     
     # Crear el html
+    # Arreglar el bug con los <p>
     def make_html(self, continue_value = False, head_png = None, head_link = None,body_png = None,body_link = None,legal_content = None, footer_png = None, footer_link = None, title = None):
         def make_a(path,list_png, list_link, position, inicio = False, Legal = False):
                 comparacion = "<!--/"+position+"/-->"
@@ -524,11 +538,26 @@ class Editor:
         elif continue_value == True:
             pass
     
+
+
+    def html_heredado(self):
+        print(self.index)
+        window_html = tk.Tk()
+        window_html.title("Edit Html")
+        window_html.config(bg='#808080')
+
+        return self.index, window_html
+
+
     # Crea el navegador de senelium
     def create_navegador(self):
         from selenium import webdriver
         from selenium.webdriver.chrome.service import Service
         from selenium.webdriver.chrome.options import Options
+
+        def loop(loops):
+            while loops:
+                time.sleep(1)
 
         # Ruta al controlador de Chrome
         PATH = 'drivers_chrome/chromedriver'
@@ -540,9 +569,8 @@ class Editor:
         service = Service(PATH)
 
         # Inicializar el driver de Chrome
-        driver = webdriver.Chrome(service=service, options=options)
-        return driver
-
+        self.driver = webdriver.Chrome(service=service, options=options)
+    
 
     # Verificar si esto logeado
     def verify_log(self):
@@ -591,10 +619,8 @@ class Editor:
         while navegador == True:
             time.sleep(1)
             navegador = navegador_boolean()
-
-
-
     
+
     def new_windows(self):
         window_html = tk.Tk()
         window_html.title("Edit Html")

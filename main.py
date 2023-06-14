@@ -2,6 +2,7 @@ from Fazil.gui_app import Frame
 from image_cut import Editor
 import tkinter as tk
 
+
 def run():
     # Crear la ventana
     window = tk.Tk()

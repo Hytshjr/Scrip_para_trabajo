@@ -19,14 +19,13 @@ class Frame(tk.Frame):
         self.label_nombre.config(font = ('aakar',12), bg='#808080')
         self.label_nombre.grid(row=0, column=0, padx=10, pady=15)
 
-        # Entrys
-
+        # Leyendo o buscando la API        
         with fileinput.FileInput('info.txt', inplace=False) as file:
             for line in file:
                 if 'key' in line:
                     key = line[line.rfind('=')+2:-3]
 
-
+        # Entrys
         self.compres_api = tk.StringVar() #Guarda lo que ingresa en el primer campo
         self.compres_api.set(key)
 
@@ -35,7 +34,6 @@ class Frame(tk.Frame):
         self.entry_api.grid(row=0, column=1)
 
         # Botones
-
         #Este primer boton guarda el api
         self.boton_save = tk.Button(self, text='Guardar Api', command=self.guardar_api)
         self.boton_save.config(width=20, border=0, fg='black', bg='#DCDCDC')
@@ -61,10 +59,35 @@ class Frame(tk.Frame):
         self.boton_replpace.config(width=40, border=0)
         self.boton_replpace.grid(row=4, column=0, pady=3, columnspan=2)
 
-                #Este boton hace el proceso de corte y compresion
+        #Este boton hace el proceso de corte y compresion
         self.boton_replpace = tk.Button(self, text='Corte y compresion de imagen', command=self.cut_compress)
         self.boton_replpace.config(width=40, border=0, fg='black', bg='#DCDCDC')
         self.boton_replpace.grid(row=5, column=0, pady=3, columnspan=2)
+
+        #Este boton hace el proceso de corte y compresion
+        self.boton_replpace = tk.Button(self, text='Corte y compresion de imagen', command=self.test)
+        self.boton_replpace.config(width=40, border=0, fg='black', bg='#DCDCDC')
+        self.boton_replpace.grid(row=6, column=0, pady=3, columnspan=2)
+
+        # Crear el checkbox y asociarlo a la variable
+        self.checkbox_var = tk.BooleanVar()
+
+        # Lee el archivo para setearlo en True o False
+        with fileinput.FileInput('info.txt', inplace=False) as file:
+                for line in file:
+                    if 'last' in line:
+                        last = line[line.rfind('=')+2:-2]
+                    
+        if last == 'False':
+            self.checkbox_var.set(False)
+
+        elif last == 'True':
+            self.checkbox_var.set(True)
+            
+        checkbox = tk.Checkbutton(self, text="Post_Legal", variable=self.checkbox_var, command=self.las_cut)
+        checkbox.grid(row=6, column=0)
+
+
 
     def create_html(ventana):
     
@@ -261,7 +284,8 @@ class Frame(tk.Frame):
         boton_save = tk.Button(ventana, text='Cerrar', command=close)
         boton_save.config(width=20, border=0, fg='black', bg='#DCDCDC')
         boton_save.grid(row=2, column=1, columnspan=1)
-        
+
+
 
     def guardar_api(self):
         import fileinput
@@ -275,18 +299,51 @@ class Frame(tk.Frame):
                               
                     # Buscar la etiqueta <!--/Legal/-->
                     if 'key' in line:
-                      print(f'''key = {key}''')
+                      print(f'''key = {key},''')
                     
                     else:
                       print(line,end='')  
-    
+
+
+
     def replace_api(self):
         self.compres_api.set('')
         self.entry_api.config(state='normal')
 
+
+    def test(self):
+        imaenes, windows = self.clase.html_heredado()
+        
+
+
     def cut_compress(self):
-        self.clase.cut_image()
-        self.clase.compress(continuar = False)
+        try:
+            self.clase.cut_image()
+            self.clase.compress(continuar = False)
+            # self.clase.html_heredado()
+
+        
+        except NameError as e:
+            print(e)
+        
+
+    def las_cut(self):
+        
+        import fileinput
+
+        last = self.checkbox_var.get()
+
+        with fileinput.FileInput('info.txt', inplace=True) as file:
+                # Recorrer cada línea del archivo de entrada
+                for line in file:   
+                              
+                    # Buscar la etiqueta <!--/Legal/-->
+                    if 'last' in line:
+                      print(f'''last = {last},''')
+                    
+                    else:
+                      print(line,end='')  
+
 
     def clean_frame(self):
         self.frame.destroy()
