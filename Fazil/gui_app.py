@@ -55,7 +55,7 @@ class Frame(tk.Frame):
         self.boton_replpace.grid(row=3, column=0, pady=3, columnspan=2)
 
         #Este boton crea el nuevo frame para hacer el html
-        self.boton_replpace = tk.Button(self, text='Hacer el html', command=self.clase.new_windows)
+        self.boton_replpace = tk.Button(self, text='Hacer el html', command=self.create_html)
         self.boton_replpace.config(width=40, border=0)
         self.boton_replpace.grid(row=4, column=0, pady=3, columnspan=2)
 
@@ -71,208 +71,240 @@ class Frame(tk.Frame):
 
         # Crear el checkbox y asociarlo a la variable
         self.checkbox_var = tk.BooleanVar()
-
         # Lee el archivo para setearlo en True o False
         with fileinput.FileInput('info.txt', inplace=False) as file:
                 for line in file:
                     if 'last' in line:
-                        last = line[line.rfind('=')+2:-2]
-                    
+                        last = line[line.rfind('=')+2:-2]            
         if last == 'False':
             self.checkbox_var.set(False)
-
         elif last == 'True':
-            self.checkbox_var.set(True)
-            
+            self.checkbox_var.set(True)       
         checkbox = tk.Checkbutton(self, text="Post_Legal", variable=self.checkbox_var, command=self.las_cut)
         checkbox.grid(row=6, column=0)
 
+    def new_windows(self, name = 'Nueva ventana'):
+        window = tk.Toplevel(self)
+        window.title(name)
+        window.config(bg='#808080')
 
+        return window
 
-    def create_html(ventana):
-    
-        #Este primer espacio para poner el link de la imagen
+    def create_html(self, limpiar = False):
+        ventana = self.new_windows(name='Hacer HTML')
+
+        # Esto genera los cuadros de entrada y la variable que los guarda
+        #Este primer espacio para poner la cantidad de headers
         count_head = tk.StringVar() #Guarda lo que ingresa en el campo
         count_head.set('')
 
         entry_head = tk.Entry(ventana, textvariable = count_head)
         entry_head.config(width=20, bg='#DCDCDC', border=0)
-        entry_head.grid(row=1, column=0, padx=5, pady=5)
+        entry_head.grid(row=1, column=0, padx=10, pady=10)
 
-        #Este Segundo espacio para poner el link de la imagen
-        count_body = tk.StringVar() #Guarda lo que ingresa en el campo
+        #Este Segundo espacio para poner la cantidad de bodys
+        count_body = tk.StringVar() 
         count_body.set('')
 
         entry_body = tk.Entry(ventana, textvariable = count_body)
         entry_body.config(width=20, bg='#DCDCDC', border=0)
         entry_body.grid(row=1, column=1, padx=5, pady=5)
 
-        #Este Tercer espacio para poner el link de la imagen
-        count_footer = tk.StringVar() #Guarda lo que ingresa en el campo
+        #Este Tercer espacio para poner la cantidad de footer
+        count_footer = tk.StringVar() 
         count_footer.set('')
 
         entry_footer = tk.Entry(ventana, textvariable = count_footer)
         entry_footer.config(width=20, bg='#DCDCDC', border=0)
         entry_footer.grid(row=1, column=2, padx=5, pady=5)
 
-        #Este Cuarto espacio para poner el link de la imagen
-        count_legal = tk.StringVar() #Guarda lo que ingresa en el campo
+        #Este Cuarto espacio para poner la cantidad de legales
+        count_legal = tk.StringVar() 
         count_legal.set('')
 
         entry_legal = tk.Entry(ventana, textvariable = count_legal)
         entry_legal.config(width=20, bg='#DCDCDC', border=0)
         entry_legal.grid(row=1, column=3, padx=5, pady=5)
 
+        # # def obtener_contenido():
+        #     nonlocal ventana
+        #     nonlocal entry_head
+        #     nonlocal entry_body
+        #     nonlocal entry_footer
+        #     nonlocal entry_legal
+
+        #     # ventana.clean_frame()
+
+        #     head = entry_head.get()
+        #     body = entry_body.get()
+        #     footer = entry_footer.get()
+        #     legal = entry_legal.get()
+
+        #     try:
+        #         head = int(head)
+        #         body = int(body)
+        #         footer = int(footer)
+        #         legal = int(legal)
+
+        #         int_pass = True
+            
+        #     except:
+        #         int_pass = False
+
+        #     if int_pass == False:
+        #         MessageBox.showwarning("Alerta", 
+        #         "Solo ingrese valores numericos")
+
+        #     elif int_pass == True:
+
+        #         def create_get_content(count, position, link = True):
+
+        #             link_png = []
+        #             link_app = []
+
+        #             def get_text():
+        #                     nonlocal entry_content_png
+        #                     nonlocal entry_content_link
+
+        #                     nonlocal link_png
+        #                     nonlocal link_app
+
+        #                     try:
+        #                         for content_get in entry_content_png:
+        #                             link_png.append(content_get.get())
+        #                     except:
+        #                         pass
+
+        #                     try:
+        #                         for content_get in entry_content_link:
+        #                             link_app.append(content_get.get())
+        #                     except:
+        #                         pass
+
+        #             if link == True:
+
+        #                 entry_content_png = []
+        #                 entry_content_link = []
+        #                 # position_row = position+1
+
+        #                 for box_content in range(count):
+
+        #                     count_varia = tk.StringVar() #Guarda lo que ingresa en el campo
+
+        #                     position_row = position+(box_content+1)
+
+        #                     count_get = tk.Entry(ventana, textvariable = count_varia)
+        #                     count_get.config(width=20, bg='#DCDCDC', border=0)
+        #                     count_get.grid(row=position_row, column=0, padx=5, pady=5,columnspan=2)
+
+        #                     entry_content_png.append(count_get)
+
+        #                 # --------------------------------------------------------------
+
+        #                 for box_content in range(count):
+
+        #                     count_varia = tk.StringVar() #Guarda lo que ingresa en el campo
+
+        #                     position_row = position+(box_content+1)
+
+        #                     count_get = tk.Entry(ventana, textvariable = count_varia)
+        #                     count_get.config(width=20, bg='#DCDCDC', border=0)
+        #                     count_get.grid(row=position_row, column=1, padx=5, pady=5,columnspan=2)
+
+        #                     entry_content_link.append(count_get)
+                        
+        #                 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        #                 # Boton para obtener el contenido de las lineas
+        #                 boton_entry = tk.Button(ventana, text='Guardar valores', command=get_text)
+        #                 boton_entry.config(width=20, border=0, fg='black', bg='#DCDCDC')
+        #                 boton_entry.grid(row=position_row+1, column=1,columnspan=2)
+
+        #                 return link_png, link_app
+
+        #             elif link == False:
+        #                 entry_content_png = []
+
+        #                 for box_content in range(count):
+        #                     count_varia = tk.StringVar() #Guarda lo que ingresa en el campo
+
+        #                     position_row = position+(box_content+1)
+
+        #                     count_get = tk.Entry(ventana, textvariable = count_varia)
+        #                     count_get.config(width=20, bg='#DCDCDC', border=0)
+        #                     count_get.grid(row=position_row, column=1, padx=5, pady=5)
+
+        #                     entry_content_png.append(count_get)
+
+        #                 boton_entry = tk.Button(ventana, text='Guardar valores', command=get_text)
+        #                 boton_entry.config(width=20, border=0, fg='black', bg='#DCDCDC')
+        #                 boton_entry.grid(row=position_row+1, column=1,columnspan=2)
+
+        #                 return link_png
+                
+        #         def test():
+
+        #             import sys
+        #             sys.path.append('../')
+        #             from image_cut import Editor
+        #             # print('jojojo')
+
+        #             edit = Editor()
+
+        #             nonlocal head_png
+        #             nonlocal head_link
+        #             nonlocal body_png
+        #             nonlocal body_link
+        #             nonlocal footer_png
+        #             nonlocal footer_link
+        #             nonlocal legal_content
+        #             nonlocal title
+
+        #             edit.make_html(head_png=head_png, head_link=head_link, body_png=body_png, body_link=body_link, footer_png = footer_png, footer_link = footer_link, legal_content=legal_content, title = title) #legal_content=legal_content)
+                    
+
+        #         head_png,head_link = create_get_content(head,3)
+        #         body_png,body_link = create_get_content(body,(head+3+1+1))
+        #         footer_png, footer_link = create_get_content(footer,(head+body+3+3))
+        #         legal_content = create_get_content(legal,(head+body+11+1), False)
+        #         title = create_get_content(1,(head+body+11+7), False)
+
+        #         # Boton para obtener las cantidades
+        #         boton_save = tk.Button(ventana, text='Hacer HTML', command=test)
+        #         boton_save.config(width=50, border=0, fg='black', bg='#DCDCDC')
+        #         boton_save.grid(row=body+head+legal+footer+11+8, column=0, columnspan=3, pady=10)
+
+
         def obtener_contenido():
+            # Extraemos las variables de afuera de la funcion
             nonlocal ventana
             nonlocal entry_head
             nonlocal entry_body
             nonlocal entry_footer
             nonlocal entry_legal
 
-            # ventana.clean_frame()
-
+            # Usamos el metodo get de tk para obtener los valores
             head = entry_head.get()
             body = entry_body.get()
             footer = entry_footer.get()
             legal = entry_legal.get()
 
+            # Aseguramos que sea un numero entero
             try:
                 head = int(head)
                 body = int(body)
                 footer = int(footer)
                 legal = int(legal)
-
-                int_pass = True
+                    
+                head_png,head_link = self.crear_entrys(head,3, ventana)
+                body_png,body_link = self.crear_entrys(body,(head+3+1+1), ventana)
+                footer_png, footer_link = self.crear_entrys(footer,(head+body+3+3), ventana)
+                legal_content = self.crear_entrys(legal,(head+body+11+1), ventana, False)
+                title = self.crear_entrys(1,(head+body+11+7), ventana, False)
             
             except:
-                int_pass = False
-
-            if int_pass == False:
                 MessageBox.showwarning("Alerta", 
-                "Solo ingrese valores numericos")
-
-            elif int_pass == True:
-
-                def create_get_content(count, position, link = True):
-
-                    link_png = []
-                    link_app = []
-
-                    def get_text():
-                            nonlocal entry_content_png
-                            nonlocal entry_content_link
-
-                            nonlocal link_png
-                            nonlocal link_app
-
-                            try:
-                                for content_get in entry_content_png:
-                                    link_png.append(content_get.get())
-                            except:
-                                pass
-
-                            try:
-                                for content_get in entry_content_link:
-                                    link_app.append(content_get.get())
-                            except:
-                                pass
-
-                    if link == True:
-
-                        entry_content_png = []
-                        entry_content_link = []
-                        # position_row = position+1
-
-                        for box_content in range(count):
-
-                            count_varia = tk.StringVar() #Guarda lo que ingresa en el campo
-
-                            position_row = position+(box_content+1)
-
-                            count_get = tk.Entry(ventana, textvariable = count_varia)
-                            count_get.config(width=20, bg='#DCDCDC', border=0)
-                            count_get.grid(row=position_row, column=0, padx=5, pady=5,columnspan=2)
-
-                            entry_content_png.append(count_get)
-
-                        # --------------------------------------------------------------
-
-                        for box_content in range(count):
-
-                            count_varia = tk.StringVar() #Guarda lo que ingresa en el campo
-
-                            position_row = position+(box_content+1)
-
-                            count_get = tk.Entry(ventana, textvariable = count_varia)
-                            count_get.config(width=20, bg='#DCDCDC', border=0)
-                            count_get.grid(row=position_row, column=1, padx=5, pady=5,columnspan=2)
-
-                            entry_content_link.append(count_get)
-                        
-                        # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-                        # Boton para obtener el contenido de las lineas
-                        boton_entry = tk.Button(ventana, text='Guardar valores', command=get_text)
-                        boton_entry.config(width=20, border=0, fg='black', bg='#DCDCDC')
-                        boton_entry.grid(row=position_row+1, column=1,columnspan=2)
-
-                        return link_png, link_app
-
-                    elif link == False:
-                        entry_content_png = []
-
-                        for box_content in range(count):
-                            count_varia = tk.StringVar() #Guarda lo que ingresa en el campo
-
-                            position_row = position+(box_content+1)
-
-                            count_get = tk.Entry(ventana, textvariable = count_varia)
-                            count_get.config(width=20, bg='#DCDCDC', border=0)
-                            count_get.grid(row=position_row, column=1, padx=5, pady=5)
-
-                            entry_content_png.append(count_get)
-
-                        boton_entry = tk.Button(ventana, text='Guardar valores', command=get_text)
-                        boton_entry.config(width=20, border=0, fg='black', bg='#DCDCDC')
-                        boton_entry.grid(row=position_row+1, column=1,columnspan=2)
-
-                        return link_png
-                
-                def test():
-
-                    import sys
-                    sys.path.append('../')
-                    from image_cut import Editor
-                    # print('jojojo')
-
-                    edit = Editor()
-
-                    nonlocal head_png
-                    nonlocal head_link
-                    nonlocal body_png
-                    nonlocal body_link
-                    nonlocal footer_png
-                    nonlocal footer_link
-                    nonlocal legal_content
-                    nonlocal title
-
-                    edit.make_html(head_png=head_png, head_link=head_link, body_png=body_png, body_link=body_link, footer_png = footer_png, footer_link = footer_link, legal_content=legal_content, title = title) #legal_content=legal_content)
-                    
-
-                head_png,head_link = create_get_content(head,3)
-                body_png,body_link = create_get_content(body,(head+3+1+1))
-                footer_png, footer_link = create_get_content(footer,(head+body+3+3))
-                legal_content = create_get_content(legal,(head+body+11+1), False)
-                title = create_get_content(1,(head+body+11+7), False)
-
-                # Boton para obtener las cantidades
-                boton_save = tk.Button(ventana, text='Hacer HTML', command=test)
-                boton_save.config(width=50, border=0, fg='black', bg='#DCDCDC')
-                boton_save.grid(row=body+head+legal+footer+11+8, column=0, columnspan=3, pady=10)
-
-        def close():
-            ventana.destroy()
+                    "Solo ingrese valores numericos")
 
         # BOTONES
         # Boton para obtener las cantidades
@@ -281,10 +313,82 @@ class Frame(tk.Frame):
         boton_save.grid(row=2, column=2,columnspan=2)
 
         # Boton para cerrar la ventana
-        boton_save = tk.Button(ventana, text='Cerrar', command=close)
+        boton_save = tk.Button(ventana, text='Cerrar') #Agregar el comman para "Cerrar"
         boton_save.config(width=20, border=0, fg='black', bg='#DCDCDC')
         boton_save.grid(row=2, column=1, columnspan=1)
 
+
+
+    def crear_entrys(self,count, position, ventana, link = True):
+
+        link_png = []
+        link_app = []
+
+        # En una iteracion crea los entrys que le pida, le paso la columna como atributo
+        def crear_inputs(count, position, columna = 0):
+            # count: La cantidad de entrys debe de haber
+            # position: a partir de que empieza a crear los entrys
+
+            list_entry = []
+
+            for box_content in range(count):
+
+                count_varia = tk.StringVar() #Guarda lo que ingresa en el campo
+                position_row = position+(box_content+1)
+
+                count_get = tk.Entry(ventana, textvariable = count_varia)
+                count_get.config(width=20, bg='#DCDCDC', border=0)
+                count_get.grid(row=position_row, column=columna, padx=5, pady=5, columnspan=2)
+
+                list_entry.append(count_get)
+
+            return list_entry
+            
+
+        # def get_text():
+        #         nonlocal entry_content_png
+        #         nonlocal entry_content_link
+
+        #         nonlocal link_png
+        #         nonlocal link_app
+
+        #         try:
+        #             for content_get in entry_content_png:
+        #                 link_png.append(content_get.get())
+        #         except:
+        #             pass
+
+        #         try:
+        #             for content_get in entry_content_link:
+        #                 link_app.append(content_get.get())
+        #         except:
+        #             pass
+
+        # La condicion de si viene con link o no
+        if link == True:
+            entry_content_png = []
+            entry_content_link = []
+
+            entry_content_png = crear_inputs(count, position)
+            entry_content_link = crear_inputs(count, position, columna=1)
+
+            # Boton para obtener el contenido de las lineas
+            boton_entry = tk.Button(ventana, text='Guardar valores') #command=get_text
+            boton_entry.config(width=20, border=0, fg='black', bg='#DCDCDC')
+            boton_entry.grid(row=position+count+1, column=0,columnspan=3)
+
+            return link_png, link_app
+
+        elif link == False:
+            entry_content_png = []
+            entry_content_png = crear_inputs(count, position)
+
+            # Boton para obtener el contenido de las lineas
+            boton_entry = tk.Button(ventana, text='Guardar valores') #command=get_text
+            boton_entry.config(width=20, border=0, fg='black', bg='#DCDCDC')
+            boton_entry.grid(row=position+count+1, column=0,columnspan=3)
+
+            return link_png
 
 
     def guardar_api(self):
@@ -305,15 +409,13 @@ class Frame(tk.Frame):
                       print(line,end='')  
 
 
-
     def replace_api(self):
         self.compres_api.set('')
         self.entry_api.config(state='normal')
 
 
     def test(self):
-        imaenes, windows = self.clase.html_heredado()
-        
+        imagenes, windows = self.clase.html_heredado()
 
 
     def cut_compress(self):

@@ -621,12 +621,12 @@ class Editor:
             navegador = navegador_boolean()
     
 
-    def new_windows(self):
-        window_html = tk.Tk()
-        window_html.title("Edit Html")
-        window_html.config(bg='#808080')
+    # def new_windows(self):
+    #     window_html = tk.Tk()
+    #     window_html.title("Edit Html")
+    #     window_html.config(bg='#808080')
 
-        fr.create_html(ventana = window_html)
+    #     fr.create_html(ventana = window_html)
     
 
 
