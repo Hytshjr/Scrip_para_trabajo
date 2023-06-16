@@ -5,8 +5,8 @@ import tkinter as tk
 import numpy as np
 import fileinput
 import tinify
-import time
 import glob
+import time
 import cv2
 import os
 
@@ -42,6 +42,7 @@ def dist_maker(file_path, dist_name, ruta_herencia = True):
         
         elif os.path.exists(file_path+'/'+dist_name):
             return file_path+'/'+dist_name
+
 
 def descomprimir(path):
     extention = path[path.rfind('.'):]
@@ -121,6 +122,7 @@ def descomprimir(path):
     else:
         return path
 
+
 def buscador(archivo, etiqueta, final_content = -2):
     import fileinput
 
@@ -132,13 +134,14 @@ def buscador(archivo, etiqueta, final_content = -2):
     return key
 
 
+
 class Editor:
     def __init__(self, root = None, path = None):
         
         self.root = root
         self.path = path
     
-    # Cortar las imagenes
+
     def cut_image(self):
         def mouse_track(event,x,y,flags,param):
             nonlocal size_img
@@ -316,7 +319,6 @@ class Editor:
             print(e)
     
 
-    # Comprimir las imagenes
     def compress(self, continuar = True):
         import fileinput
 
@@ -371,10 +373,9 @@ class Editor:
             print(e)
             
     
-    # Crear el html
     # Arreglar el bug con los <p>
-    def make_html(self, continue_value = False, head_png = None, head_link = None,body_png = None,body_link = None,legal_content = None, footer_png = None, footer_link = None, title = None):
-        def make_a(path,list_png, list_link, position, inicio = False, Legal = False):
+    def make_html(self, head_png=None, head_link=None, body_png=None, body_link=None, legal_content=None, footer_png=None, footer_link=None, title=['Nuevo mail'], continue_value = False):
+        def make_a(path,list_png, list_link, position, inicio = False, Legal = False, guia = 'guia.html'):
                 comparacion = "<!--/"+position+"/-->"
                 path_file = path+"/"+title[0]+".html"
 
@@ -460,7 +461,7 @@ class Editor:
                                 
                     if list_link[0] == '':
                         with open((path+"/"+title[0]+".html"), "w") as output_file:
-                            with open("guia.html", "r") as input_file:
+                            with open(guia, "r") as input_file:
                                 
                                 # Recorrer cada línea del archivo de entrada
                                 for line in input_file:
@@ -536,20 +537,16 @@ class Editor:
             make_a(path, title, head_link,'<title>', Legal=True, inicio=False)
 
         elif continue_value == True:
-            pass
+            path = get_path(False)
+            make_a(path, head_png, head_link, 'Contenido',inicio=True, guia='guia_aut.html')
+            make_a(path= path,position='<p>',list_png= legal_content,list_link= head_link, Legal=True, inicio=False, guia='guia_aut.html')
+            make_a(path, title, head_link,'<title>', Legal=True, inicio=False, guia='guia_aut.html')
     
 
-
     def html_heredado(self):
-        print(self.index)
-        window_html = tk.Tk()
-        window_html.title("Edit Html")
-        window_html.config(bg='#808080')
-
-        return self.index, window_html
+        return self.index
 
 
-    # Crea el navegador de senelium
     def create_navegador(self):
         from selenium import webdriver
         from selenium.webdriver.chrome.service import Service
@@ -572,7 +569,6 @@ class Editor:
         self.driver = webdriver.Chrome(service=service, options=options)
     
 
-    # Verificar si esto logeado
     def verify_log(self):
         
         from selenium.webdriver.common.by import By
@@ -621,13 +617,7 @@ class Editor:
             navegador = navegador_boolean()
     
 
-    # def new_windows(self):
-    #     window_html = tk.Tk()
-    #     window_html.title("Edit Html")
-    #     window_html.config(bg='#808080')
 
-    #     fr.create_html(ventana = window_html)
-    
 
 
 
