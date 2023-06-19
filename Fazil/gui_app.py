@@ -71,18 +71,34 @@ class Frame(tk.Frame):
         self.boton_replpace.grid(row=6, column=0, pady=3, columnspan=2)
 
         # Crear el checkbox y asociarlo a la variable
-        self.checkbox_var = tk.BooleanVar()
+        checkbox_var_color = tk.BooleanVar()
+
+        # Lee el archivo para setearlo en True o False
+        with fileinput.FileInput('info.txt', inplace=False) as file:
+                for line in file:
+                    if 'color' in line:
+                        color = line[line.rfind('=')+2:-2]            
+        if color == 'False':
+            checkbox_var_color.set(False)
+        elif color == 'True':
+            checkbox_var_color.set(True)       
+        checkbox_color = tk.Checkbutton(self, text="Cambiar color", variable=checkbox_var_color, command=lambda: self.las_cut('color', checkbox_var_color))
+        checkbox_color.grid(row=7, column=1)
+
+        # Crear el checkbox y asociarlo a la variable
+        checkbox_var = tk.BooleanVar()
+
         # Lee el archivo para setearlo en True o False
         with fileinput.FileInput('info.txt', inplace=False) as file:
                 for line in file:
                     if 'last' in line:
                         last = line[line.rfind('=')+2:-2]            
         if last == 'False':
-            self.checkbox_var.set(False)
+            checkbox_var.set(False)
         elif last == 'True':
-            self.checkbox_var.set(True)       
-        checkbox = tk.Checkbutton(self, text="Post_Legal", variable=self.checkbox_var, command=self.las_cut)
-        checkbox.grid(row=6, column=0)
+            checkbox_var.set(True)       
+        checkbox = tk.Checkbutton(self, text="Licor en exceso", variable=checkbox_var, command=lambda: self.las_cut('last', checkbox_var))
+        checkbox.grid(row=7, column=0)
 
 
     def new_windows(self, name = 'Nueva ventana'):
@@ -283,6 +299,7 @@ class Frame(tk.Frame):
 
     def test(self):
 
+        self.clase.cut_image()
         def obtener_contenido():
             nonlocal count_legal
             nonlocal num_imagenes
@@ -296,18 +313,28 @@ class Frame(tk.Frame):
             link_png, link_app = self.crear_entrys(num_imagenes,1,ventana)
             legal_content =self.crear_entrys(legal, (num_imagenes+2), ventana, link=False)
             title = self.crear_entrys(1,(num_imagenes+legal+4), ventana, link=False)
+            
+            with fileinput.FileInput('info.txt', inplace=False) as file:
+                for line in file:
+                    if 'color' in line:
+                        color = line[line.rfind('=')+2:-2]  
+
+            if color == 'True':
+                color = self.crear_entrys(1,(num_imagenes+legal+6), ventana, link=False)
+
+            else:
+                color = ['#fff']
 
             # Boton para hacer el html
-            boton_save = tk.Button(ventana, text='Hacer HTML', command= lambda:self.clase.make_html(head_png = link_png, head_link = link_app,legal_content = legal_content,title=title, continue_value= True))
+            boton_save = tk.Button(ventana, text='Hacer HTML', command= lambda:self.clase.make_html(head_png = link_png, head_link = link_app,legal_content = legal_content,title=title, continue_value= True, colors=color))
             boton_save.config(width=50, border=0, fg='black', bg='#DCDCDC')
-            boton_save.grid(row=num_imagenes+legal+7, column=0, columnspan=3, pady=10)
+            boton_save.grid(row=num_imagenes+legal+9, column=0, columnspan=3, pady=10)   
 
-            
 
         ventana = self.new_windows('Hacer html')
         ventana.config(width=100)
 
-        #Este primer espacio para poner la cantidad de headers
+        #Este primer espacio para poner la cantidad de legales
         count_legal = tk.StringVar() #Guarda lo que ingresa en el campo
         count_legal.set('')
 
@@ -322,39 +349,81 @@ class Frame(tk.Frame):
 
         # num_imagenes es una variable que se hereda de las imagenes recortadas
         num_imagenes = self.clase.html_heredado()
-        
-
-        # # Boton para obtener las cantidades
-        # boton_save = tk.Button(ventana, text='Hacer HTML', command= lambda:self.clase.make_html(head_png,head_link,body_png,body_link,legal_content,footer_png,footer_link,title))
-
-        # boton_save.config(width=50, border=0, fg='black', bg='#DCDCDC')
-        # boton_save.grid(row=6, column=0, columnspan=3, pady=10)
 
 
     def cut_compress(self):
         try:
             self.clase.cut_image()
             self.clase.compress(continuar = False)
-            # self.clase.html_heredado()
+            
+            def obtener_contenido():
+                nonlocal count_legal
+                nonlocal num_imagenes
+                nonlocal ventana
+
+                # Claridad de legales
+                legal = count_legal.get()
+                legal = int(legal)
+
+                # Crear los nuevos inputs
+                link_png, link_app = self.crear_entrys(num_imagenes,1,ventana)
+                legal_content =self.crear_entrys(legal, (num_imagenes+2), ventana, link=False)
+                title = self.crear_entrys(1,(num_imagenes+legal+4), ventana, link=False)
+                
+                with fileinput.FileInput('info.txt', inplace=False) as file:
+                    for line in file:
+                        if 'color' in line:
+                            color = line[line.rfind('=')+2:-2]  
+
+                if color == 'True':
+                    color = self.crear_entrys(1,(num_imagenes+legal+6), ventana, link=False)
+
+                else:
+                    color = ['#fff']
+
+                # Boton para hacer el html
+                boton_save = tk.Button(ventana, text='Hacer HTML', command= lambda:self.clase.make_html(head_png = link_png, head_link = link_app,legal_content = legal_content,title=title, continue_value= True, colors=color))
+                boton_save.config(width=50, border=0, fg='black', bg='#DCDCDC')
+                boton_save.grid(row=num_imagenes+legal+9, column=0, columnspan=3, pady=10)   
+
+
+            ventana = self.new_windows('Hacer html')
+            ventana.config(width=100)
+
+            #Este primer espacio para poner la cantidad de legales
+            count_legal = tk.StringVar() #Guarda lo que ingresa en el campo
+            count_legal.set('')
+
+            entry_legal = tk.Entry(ventana, textvariable = count_legal)
+            entry_legal.config(width=20, bg='#DCDCDC', border=0)
+            entry_legal.grid(row=0, column=0, padx=10, pady=10)
+
+            # Boton para obtener las cantidades
+            boton_save = tk.Button(ventana, text='Cantidad de Legales', command=obtener_contenido)
+            boton_save.config(width=20, border=0, fg='black', bg='#DCDCDC')
+            boton_save.grid(row=0, column=1,columnspan=2)
+
+            # num_imagenes es una variable que se hereda de las imagenes recortadas
+            num_imagenes = self.clase.html_heredado()
 
         
         except NameError as e:
             print(e)
         
 
-    def las_cut(self):
+    def las_cut(self, cambio, check_box):
         
         import fileinput
 
-        last = self.checkbox_var.get()
+        bool = check_box.get()
 
         with fileinput.FileInput('info.txt', inplace=True) as file:
                 # Recorrer cada línea del archivo de entrada
                 for line in file:   
                               
                     # Buscar la etiqueta <!--/Legal/-->
-                    if 'last' in line:
-                      print(f'''last = {last},''')
+                    if cambio in line:
+                      print(f'''{cambio} = {bool},''')
                     
                     else:
                       print(line,end='')  

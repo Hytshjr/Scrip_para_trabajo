@@ -374,26 +374,53 @@ class Editor:
             
     
     # Arreglar el bug con los <p>
-    def make_html(self, head_png=None, head_link=None, body_png=None, body_link=None, legal_content=None, footer_png=None, footer_link=None, title=['Nuevo mail'], continue_value = False):
-        def make_a(path,list_png, list_link, position, inicio = False, Legal = False, guia = 'guia.html'):
+    def make_html(self, head_png=None, head_link=None, body_png=None, body_link=None, legal_content=None, footer_png=None, footer_link=None, title=['Nuevo mail'], continue_value = False, colors = ['#fff']):
+        def make_a(path,list_png, list_link, position, inicio = False, Legal = False, guia = 'guia.html', color = False):
+                import fileinput
+
                 comparacion = "<!--/"+position+"/-->"
                 path_file = path+"/"+title[0]+".html"
 
-                if inicio  == False and Legal == False:
-                    import fileinput
 
-                    if list_link[0] == '':
-                        with fileinput.FileInput(path_file, inplace=True, backup=False) as file:
-                            # Recorrer cada línea del archivo de entrada
-                            for line in file:
-                                print(line,end='')
-                                
-                                # Buscar la etiqueta <!--/Legal/-->
-                                if comparacion in line:
+                if color == True:
+                    with fileinput.FileInput(path_file, inplace=True, backup=False) as file:
+                                # Recorrer cada línea del archivo de entrada
+                                count=0
+                                for line in file:
+                                    count -=1
+                                    
+                                    
+                                    # Buscar la etiqueta <!--/Legal/-->
+                                    if comparacion in line:
+                                        count=3
+                                        for link_png in list_png:
+                                        # Agregar el código después de la etiqueta
+                                            print(f'''
+            <table align="center" bgcolor="{link_png}" border="0" cellpadding="0" cellspacing="0" class="banner" width="600">
+                <tr>
+                    <td
+                        style="font-family:'Trebuchet MS', Arial, Helvetica, sans-serif; color:#fff; font-size:12px; padding:14px 20px 20px 20px; text-align:justify;">''')
+                                    
+                                    elif count < 0:
+                                        print(line,end='')
 
-                                    for link_png in list_png:
-                                    # Agregar el código después de la etiqueta
-                                        print(f'''
+                elif inicio  == False and Legal == False:
+                    
+
+                    for link in list_link:
+
+                        if link == '':
+                            with fileinput.FileInput(path_file, inplace=True, backup=False) as file:
+                                # Recorrer cada línea del archivo de entrada
+                                for line in file:
+                                    print(line,end='')
+                                    
+                                    # Buscar la etiqueta <!--/Legal/-->
+                                    if comparacion in line:
+
+                                        for link_png in list_png:
+                                        # Agregar el código después de la etiqueta
+                                            print(f'''
                 <a target="_blank"> 
                     <table align="center" border="0" bgcolor="#1fc0bd" cellpadding="0" cellspacing="0" class="banner" width="600">
                         <tr>
@@ -412,18 +439,18 @@ class Editor:
                                 
 ''')
                                                         
-                    elif list_link[0] != '':
-                        with fileinput.FileInput(path_file, inplace=True,backup=False) as file:
-                            # Recorrer cada línea del archivo de entrada
-                            for line in file:
-                                print(line,end='')
+                        elif link != '':
+                            with fileinput.FileInput(path_file, inplace=True,backup=False) as file:
+                                # Recorrer cada línea del archivo de entrada
+                                for line in file:
+                                    print(line,end='')
+                                
+                                    # Buscar la etiqueta <!--/Legal/-->
+                                    if comparacion in line:
                             
-                                # Buscar la etiqueta <!--/Legal/-->
-                                if comparacion in line:
-                        
-                                    for index,link_png  in enumerate(list_png):
-                                    # Agregar el código después de la etiqueta
-                                        print(f'''
+                                        for index,link_png  in enumerate(list_png):
+                                        # Agregar el código después de la etiqueta
+                                            print(f'''
                 <a href="{list_link[index]}" target="_blank"> 
                     <table align="center" border="0" bgcolor="#1fc0bd" cellpadding="0" cellspacing="0" class="banner" width="600">
                         <tr>
@@ -453,26 +480,42 @@ class Editor:
                             # Buscar la etiqueta <!--/Legal/-->
                             if position in line:
                     
-                                for link_png  in list_png:
-                                # Agregar el código después de la etiqueta
-                                    print(f'''                      {link_png}''')
-                                            
-                elif inicio == True:
-                                
-                    if list_link[0] == '':
-                        with open((path+"/"+title[0]+".html"), "w") as output_file:
-                            with open(guia, "r") as input_file:
-                                
-                                # Recorrer cada línea del archivo de entrada
-                                for line in input_file:
-                                    # Escribir la línea en el archivo de salida
-                                    output_file.write(line)
-                                    
-                                    # Buscar la etiqueta <!--/Legal/-->
-                                    if comparacion in line:
+                                for link_png  in range(len(list_png)):
 
-                                        for link_png in list_png:
-                                            output_file.write(f'''
+                                    if len(list_png) == 1:
+                                        print(f'''                              {list_png[link_png]}''')
+
+                                    else:
+                                        if link_png == 0:
+                                            position_1 = position
+
+                                            # Agregar el código después de la etiqueta
+                                            print(f'''                             {list_png[link_png]}''')
+                                            print(f'''                            {position_1[0]+'/'+position_1[1:]} \n''')
+                                                
+                                        else:
+                                            position_1 = position
+                                            print(f'''                             {position_1} \n''', end='')
+                                            print(f'''                              {list_png[link_png]} \n''' ,end='')
+                            
+                elif inicio == True:
+
+                    for link in list_link:
+                                
+                        if link == '':
+                            with open((path+"/"+title[0]+".html"), "w") as output_file:
+                                with open(guia, "r") as input_file:
+                                    
+                                    # Recorrer cada línea del archivo de entrada
+                                    for line in input_file:
+                                        # Escribir la línea en el archivo de salida
+                                        output_file.write(line)
+                                        
+                                        # Buscar la etiqueta <!--/Legal/-->
+                                        if comparacion in line:
+
+                                            for link_png in list_png:
+                                                output_file.write(f'''
                 <a target="_blank"> 
                     <table align="center" border="0" bgcolor="#1fc0bd" cellpadding="0" cellspacing="0" class="banner" width="600">
                         <tr>
@@ -492,22 +535,22 @@ class Editor:
 ''')
 
                                                         
-                    elif list_link[0] != '':
-                        with open((path+"/"+title[0]+".html"), "w") as output_file:
-                            with open("guia.html", "r") as input_file:
+                        elif link != '':
+                            with open((path+"/"+title[0]+".html"), "w") as output_file:
+                                with open("guia.html", "r") as input_file:
 
-                                
-                                # Recorrer cada línea del archivo de entrada
-                                for line in input_file:
-                                    # Escribir la línea en el archivo de salida
-                                    output_file.write(line)
                                     
-                                    # Buscar la etiqueta <!--/Legal/-->
-                                    if comparacion in line:
+                                    # Recorrer cada línea del archivo de entrada
+                                    for line in input_file:
+                                        # Escribir la línea en el archivo de salida
+                                        output_file.write(line)
+                                        
+                                        # Buscar la etiqueta <!--/Legal/-->
+                                        if comparacion in line:
 
-                                        for index,link_png  in enumerate(list_png):
-                                        # Agregar el código después de la etiqueta
-                                            output_file.write(f'''
+                                            for index,link_png  in enumerate(list_png):
+                                            # Agregar el código después de la etiqueta
+                                                output_file.write(f'''
                 <a href="{list_link[index]}" target="_blank"> 
                     <table align="center" border="0" bgcolor="#1fc0bd" cellpadding="0" cellspacing="0" class="banner" width="600">
                         <tr>
@@ -526,7 +569,7 @@ class Editor:
 
 ''')
                                             
-        
+
         if continue_value == False:
             path = get_path(False)
 
@@ -541,6 +584,7 @@ class Editor:
             make_a(path, head_png, head_link, 'Contenido',inicio=True, guia='guia_aut.html')
             make_a(path= path,position='<p>',list_png= legal_content,list_link= head_link, Legal=True, inicio=False, guia='guia_aut.html')
             make_a(path, title, head_link,'<title>', Legal=True, inicio=False, guia='guia_aut.html')
+            make_a(path, colors, head_link,'Footer', Legal=True, inicio=False, guia='guia_aut.html', color = True)
     
 
     def html_heredado(self):
