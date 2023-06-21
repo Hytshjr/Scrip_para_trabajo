@@ -61,12 +61,12 @@ class Frame(tk.Frame):
         self.boton_replpace.grid(row=4, column=0, pady=3, columnspan=2)
 
         #Este boton hace el proceso de corte y compresion
-        self.boton_replpace = tk.Button(self, text='Corte y compresion de imagen', command=self.cut_compress)
+        self.boton_replpace = tk.Button(self, text='Corte y compresion de imagen', command=self.just_cut)
         self.boton_replpace.config(width=40, border=0, fg='black', bg='#DCDCDC')
         self.boton_replpace.grid(row=5, column=0, pady=3, columnspan=2)
 
         #Este boton hace el proceso de corte y compresion
-        self.boton_replpace = tk.Button(self, text='Corte y compresion de imagen', command=self.test)
+        self.boton_replpace = tk.Button(self, text='Corte y hacer HTML', command=self.cut_compress)
         self.boton_replpace.config(width=40, border=0, fg='black', bg='#DCDCDC')
         self.boton_replpace.grid(row=6, column=0, pady=3, columnspan=2)
 
@@ -297,38 +297,10 @@ class Frame(tk.Frame):
         self.entry_api.config(state='normal')
 
 
-    def test(self):
+    def just_cut(self):
 
         self.clase.cut_image()
-        def obtener_contenido():
-            nonlocal count_legal
-            nonlocal num_imagenes
-            nonlocal ventana
-
-            # Claridad de legales
-            legal = count_legal.get()
-            legal = int(legal)
-
-            # Crear los nuevos inputs
-            link_png, link_app = self.crear_entrys(num_imagenes,1,ventana)
-            legal_content =self.crear_entrys(legal, (num_imagenes+2), ventana, link=False)
-            title = self.crear_entrys(1,(num_imagenes+legal+4), ventana, link=False)
-            
-            with fileinput.FileInput('info.txt', inplace=False) as file:
-                for line in file:
-                    if 'color' in line:
-                        color = line[line.rfind('=')+2:-2]  
-
-            if color == 'True':
-                color = self.crear_entrys(1,(num_imagenes+legal+6), ventana, link=False)
-
-            else:
-                color = ['#fff']
-
-            # Boton para hacer el html
-            boton_save = tk.Button(ventana, text='Hacer HTML', command= lambda:self.clase.make_html(head_png = link_png, head_link = link_app,legal_content = legal_content,title=title, continue_value= True, colors=color))
-            boton_save.config(width=50, border=0, fg='black', bg='#DCDCDC')
-            boton_save.grid(row=num_imagenes+legal+9, column=0, columnspan=3, pady=10)   
+        self.clase.compress(continuar = False)   
 
 
         ventana = self.new_windows('Hacer html')

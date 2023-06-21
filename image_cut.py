@@ -373,7 +373,6 @@ class Editor:
             print(e)
             
     
-    # Arreglar el bug con los <p>
     def make_html(self, head_png=None, head_link=None, body_png=None, body_link=None, legal_content=None, footer_png=None, footer_link=None, title=['Nuevo mail'], continue_value = False, colors = ['#fff']):
         def make_a(path,list_png, list_link, position, inicio = False, Legal = False, guia = 'guia.html', color = False):
                 import fileinput
@@ -410,6 +409,7 @@ class Editor:
                     for link in list_link:
 
                         if link == '':
+
                             with fileinput.FileInput(path_file, inplace=True, backup=False) as file:
                                 # Recorrer cada línea del archivo de entrada
                                 for line in file:
@@ -439,7 +439,7 @@ class Editor:
                                 
 ''')
                                                         
-                        elif link != '':
+                        else:
                             with fileinput.FileInput(path_file, inplace=True,backup=False) as file:
                                 # Recorrer cada línea del archivo de entrada
                                 for line in file:
@@ -499,23 +499,19 @@ class Editor:
                                             print(f'''                              {list_png[link_png]} \n''' ,end='')
                             
                 elif inicio == True:
-
-                    for link in list_link:
-                                
-                        if link == '':
-                            with open((path+"/"+title[0]+".html"), "w") as output_file:
+                    with open((path+"/"+title[0]+".html"), "w") as output_file:
                                 with open(guia, "r") as input_file:
                                     
                                     # Recorrer cada línea del archivo de entrada
                                     for line in input_file:
                                         # Escribir la línea en el archivo de salida
                                         output_file.write(line)
-                                        
-                                        # Buscar la etiqueta <!--/Legal/-->
-                                        if comparacion in line:
 
-                                            for link_png in list_png:
-                                                output_file.write(f'''
+                                        if comparacion in line:
+                                            for index, link_png in enumerate(list_png):
+                                                if list_link[index] == '':
+                                                    
+                                                    output_file.write(f'''
                 <a target="_blank"> 
                     <table align="center" border="0" bgcolor="#1fc0bd" cellpadding="0" cellspacing="0" class="banner" width="600">
                         <tr>
@@ -535,22 +531,10 @@ class Editor:
 ''')
 
                                                         
-                        elif link != '':
-                            with open((path+"/"+title[0]+".html"), "w") as output_file:
-                                with open("guia.html", "r") as input_file:
+                                                else:
 
-                                    
-                                    # Recorrer cada línea del archivo de entrada
-                                    for line in input_file:
-                                        # Escribir la línea en el archivo de salida
-                                        output_file.write(line)
-                                        
-                                        # Buscar la etiqueta <!--/Legal/-->
-                                        if comparacion in line:
-
-                                            for index,link_png  in enumerate(list_png):
-                                            # Agregar el código después de la etiqueta
-                                                output_file.write(f'''
+                                                    # Agregar el código después de la etiqueta
+                                                    output_file.write(f'''
                 <a href="{list_link[index]}" target="_blank"> 
                     <table align="center" border="0" bgcolor="#1fc0bd" cellpadding="0" cellspacing="0" class="banner" width="600">
                         <tr>
@@ -584,7 +568,10 @@ class Editor:
             make_a(path, head_png, head_link, 'Contenido',inicio=True, guia='guia_aut.html')
             make_a(path= path,position='<p>',list_png= legal_content,list_link= head_link, Legal=True, inicio=False, guia='guia_aut.html')
             make_a(path, title, head_link,'<title>', Legal=True, inicio=False, guia='guia_aut.html')
-            make_a(path, colors, head_link,'Footer', Legal=True, inicio=False, guia='guia_aut.html', color = True)
+            bool = buscador('info.txt', 'color')
+
+            if bool == 'True' and '#FFF' in colors and '#fff' in colors and '' in colors:
+                make_a(path, colors, head_link,'Footer', Legal=True, inicio=False, guia='guia_aut.html', color = True)
     
 
     def html_heredado(self):
